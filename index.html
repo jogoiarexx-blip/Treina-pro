@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#09131b"><meta name="description" content="TreinaPro v1.9: treinos guiados com animações de exercícios, mapa muscular, orientações e acompanhamento de evolução.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="manifest" href="manifest.webmanifest">
+  <title>TreinaPro — Seu personal digital</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell" id="app">
+  <aside class="sidebar" aria-label="Navegação principal">
+    <a class="brand" href="#inicio" data-page="inicio"><span class="brand-mark">T<span>+</span></span><span class="brand-name">treina<span>pro</span><small>PERSONAL DIGITAL</small></span></a>
+    <span class="sidebar-caption">ESPAÇO DE TREINO</span>
+    <nav class="main-nav" id="desktopNav">
+      <button class="nav-item selected" data-page="inicio"><span class="nav-icon">▦</span> Início</button>
+      <button class="nav-item" data-page="treinos"><span class="nav-icon">◈</span> Meus treinos</button>
+      <button class="nav-item" data-page="biblioteca"><span class="nav-icon">▤</span> Exercícios</button>
+      <button class="nav-item" data-page="progresso"><span class="nav-icon">◷</span> Evolução</button>
+    </nav>
+    <div class="side-bottom"><div class="coach-mini"><span class="coach-avatar">✦</span><div><b>Seu coach digital</b><small>Uma série de cada vez.</small></div></div><button id="settingsBtn" class="settings-btn" data-page="ajustes">⚙ Configurar plano <span>›</span></button><p class="privacy-note">Seus dados ficam neste navegador.</p></div>
+  </aside>
+  <main class="main-content">
+    <header class="topbar"><div class="breadcrumbs"><span class="dot-live"></span><span id="breadcrumb">SEU PAINEL</span></div><div class="top-actions"><span class="today-date" id="dateLabel"></span><button class="avatar-btn" data-page="ajustes" title="Configurar plano" aria-label="Abrir configurações">⚙</button></div></header>
+    <div id="pageContent" aria-live="polite"></div>
+  </main>
+</div>
+<nav class="mobile-nav" aria-label="Navegação no celular"><button data-page="inicio"><b>▦</b><span>Início</span></button><button data-page="treinos"><b>◈</b><span>Treinos</span></button><button data-page="biblioteca"><b>▤</b><span>Exercícios</span></button><button data-page="progresso"><b>◷</b><span>Evolução</span></button></nav>
+<div id="welcomeRoot"></div><div id="modalRoot"></div><div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="data.js"></script><script src="viewer3d.js"></script><script src="app.js"></script><script src="coach.js"></script>
+</body></html>
