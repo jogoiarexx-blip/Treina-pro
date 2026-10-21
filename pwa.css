@@ -1,0 +1,11 @@
+/* REV4: controles PWA só na página de configurações. */
+.install-panel{margin:20px 0 24px;border-radius:16px;border:1px solid #426052;background:#112b30;padding:19px;max-width:100%;min-width:0;overflow-wrap:anywhere}
+.install-head{display:flex;align-items:flex-start;gap:13px}
+.install-head h2{font-size:18px;margin:0 0 7px;color:#edffda}
+.install-head p{font-size:13px;color:#c1d6cf;line-height:1.55;margin:0}
+.install-symbol{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#254638;color:#c6f65b;font-size:25px;flex-shrink:0}
+.install-buttons{display:flex;flex-wrap:wrap;gap:9px;margin-top:15px}
+.install-buttons button{min-height:46px;max-width:100%;white-space:normal;text-align:center}
+.install-buttons button[hidden]{display:none!important}
+.install-status{font-size:12px;line-height:1.5;color:#bcd3c6;margin:12px 0 0}
+@media(max-width:360px){.install-panel{padding:13px}.install-head{gap:9px}.install-head h2{font-size:16px}.install-buttons{display:grid;grid-template-columns:minmax(0,1fr)}.install-buttons button{width:100%}}

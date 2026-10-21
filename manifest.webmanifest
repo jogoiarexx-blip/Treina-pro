@@ -1,1 +1,31 @@
-{"name":"TreinaPro - Personal Digital","short_name":"TreinaPro","description":"Treinos guiados, instruções e progresso","start_url":"./","display":"standalone","background_color":"#09131b","theme_color":"#09131b","icons":[{"src":"assets/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},{"src":"assets/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}
+{
+  "name": "TreinaPro - Personal Digital",
+  "short_name": "TreinaPro",
+  "description": "Personal digital: treinos guiados em 2D, registro de séries, cargas, calendário e evolução, com opção offline.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#09131b",
+  "theme_color": "#09131b",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "id": "./",
+  "scope": "./",
+  "lang": "pt-BR",
+  "categories": [
+    "fitness",
+    "health",
+    "lifestyle"
+  ]
+}

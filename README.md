@@ -1,10 +1,14 @@
-# TreinaPro v2.0 — REV3
+# TreinaPro v2.0 — REV4 (instalação e offline no celular)
 
-Quatro ilustrações e animações 2D recriadas de forma original: agachamento, leg press, cadeira extensora e supino. Cada exercício recebeu comparativo inicial/final, dois quadros e três variantes animadas/pausada: 24 SVG no total.
+- Sem 3D: 29 exercícios, demonstrações 2D, programas ABC e inferiores/superiores preservados.
+- Instalação opcional nas Configurações: Android/Chrome oferece o prompt quando disponível; Safari no iPhone/iPad pede Compartilhar > Adicionar à Tela de Início.
+- Service worker armazena primeiro 13 recursos indispensáveis. A opção "Salvar exercícios para uso offline" guarda mais 174 arquivos de imagens/animações em quatro downloads simultâneos.
+- O pacote offline pode ser repetido após uma falha; caches anteriores são migrados antes de serem removidos.
+- Nova revisão não recarrega automaticamente um treino em andamento.
+- Fonte do sistema: sem solicitação de fonte a outro domínio.
+- IndexedDB, localStorage (`treinapro-personal-v1`), registros, perfil, calendário, backups e descanso mantidos.
+- O gerador `python make_portable.py` produz o HTML único para uso sem rede. Instalação PWA é apenas via site HTTPS.
 
-Preservados todos os 29 exercícios, os programas ABC e pernas/superiores, histórico de cargas, descanso ajustável e o backup no mesmo armazenamento. O visualizador continua somente **Animado** e **Etapas**, sem 3D.
+Orientações visuais educativas: não analisam postura nem substituem personal presencial. Faça backup do histórico; o navegador pode limpar caches/dados.
 
-O service worker usa cache `treinapro-v2.0-rev3`. O gerador `make_portable.py` incorpora todos os SVG no HTML único. **Não rode os geradores gráficos antigos após esta atualização sem regenerar os recursos específicos**, pois eles podem sobrescrever as melhorias.
-
-Referências consultadas para execução, sem copiar imagens: https://www.acefitness.org/resources/everyone/exercise-library/ e https://www.nasm.org/resource-center/exercise-library/leg-press .
-Desenhos educativos esquemáticos: não corrigem técnica, não substituem profissional de educação física.
+Referências: https://web.dev/learn/pwa/installation e https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers
