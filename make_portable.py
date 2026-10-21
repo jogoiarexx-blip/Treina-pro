@@ -23,6 +23,6 @@ html=html.replace('<link rel="icon" href="assets/favicon.svg" type="image/svg+xm
 html=html.replace('<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="pwa.css">',f'<style>{css}</style>')
 html=html.replace('<script src="data.js"></script><script src="storage.js"></script><script src="app.js"></script><script src="coach.js"></script><script src="pwa.js"></script>',f'<script>{data}</script><script>{storage}</script><script>{app}</script><script>{coach}</script><script>{pwa}</script>')
 html=html.replace('TreinaPro — Seu personal digital','TreinaPro — Portátil (arquivo único)')
-out=R.parent/'TreinaPro-v2.0-REV4-PORTATIL.html'
+out=R.parent/'TreinaPro-v2.0-REV5-PORTATIL.html'
 out.write_text(html,'utf8')
 print('Portable',out, 'bytes',out.stat().st_size)

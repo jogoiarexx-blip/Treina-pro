@@ -303,14 +303,14 @@ button.week-day:hover{border-color:var(--lime);background:#203b32}
 .motion-cue-panel li:before{counter-increment:cues;content:counter(cues);display:grid;place-items:center;flex:0 0 21px;height:21px;border:1px solid #7cae72;color:#caf78b;border-radius:50%;font-size:11px;font-weight:800}
 @media(max-width:620px){.motion-cue-panel ol{grid-template-columns:1fr;gap:8px}.motion-cue-panel{padding:12px}.motion-cue-panel li{font-size:12px}}
 
-/* v2.0: cronômetro de sessão compacto */
+/* v2.0 — cronômetro de sessão compacto e responsivo */
 .session-clock{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:12px 0}
 .session-clock span{font-size:13px;color:#b8cbd0}
 .session-clock strong{color:#e1ffb2;font-variant-numeric:tabular-nums;font-size:17px}
 .session-clock button{min-height:42px;min-width:95px}
 @media(max-width:320px){.session-clock{align-items:flex-start;gap:7px}.session-clock button{min-height:44px}}
 
-/* REV2: Séries reutilizáveis e descanso acessível em telas pequenas. */
+/* REV2: registro de treino com toque grande, sem sobrecarregar a tela. */
 .repeat-loads{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 12px}
 .repeat-loads .btn{min-height:44px;font-size:13px}
 .repeat-loads small{color:#b4cbc6;font-size:12px;line-height:1.4}
@@ -327,7 +327,14 @@ button.week-day:hover{border-color:var(--lime);background:#203b32}
 .rest-actions button:focus-visible,.set-done:focus-visible{outline:3px solid #c6f65b;outline-offset:2px}
 @media(max-width:340px){.rest-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.rest-actions button{min-height:46px}.repeat-loads .btn{width:100%}.previous-set{font-size:11px}}
 
-/* REV3: demonstracoes somente 2D — dois modos sem coluna vazia. */
+/* REV3: dois modos sem coluna vazia no celular. */
 .viewer-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
 .viewer-tabs .view-tab{min-height:48px;font-size:13px}
 @media(max-width:320px){.viewer-tabs .view-tab{font-size:12px;padding:10px 5px}}
+
+
+/* REV5: explicação visual mais clara para demonstrações 2D */
+.motion-explain{margin:10px 0 14px;padding:12px 14px;border-radius:16px;background:rgba(11,29,37,.88);border:1px solid rgba(120,170,150,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+.motion-explain strong{display:block;margin-bottom:6px;color:#d7ff75;font-size:13px;letter-spacing:.02em}
+.motion-explain p{margin:0;color:#dce9e4;font-size:13px;line-height:1.5}
+.motion-caption{margin-bottom:8px}

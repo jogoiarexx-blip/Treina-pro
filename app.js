@@ -69,7 +69,7 @@
    if(source==='welcome'){draftWelcomePhoto=photo;const preview=$('welcomeAvatarPreview');if(preview)preview.innerHTML=`<img src="${safe(photo)}" alt="Prévia da sua foto">`;}
    else {const draft=$('displayName')?.value;state.photo=photo;save();render();if(draft!==undefined&&$('displayName'))$('displayName').value=draft;notify('Foto adicionada ao seu perfil.');}
  }catch(error){notify(error.message||'Não foi possível usar a foto.');}}
- // Mantemos a chave localStorage antiga; IndexedDB é uma segunda cópia.
+ // O localStorage mantém compatibilidade com versões antigas e o IndexedDB é o segundo armazenamento.
  let storageErrorShown=false;
  const save=()=>{
    state._savedAt=Math.max(Date.now(),Number(state._savedAt||0)+1);
@@ -77,25 +77,29 @@
    let localOK=false;
    try{localStorage.setItem(LS,snapshot);localOK=true;}catch{}
    if(window.TreinaProStore){window.TreinaProStore.persist({savedAt:state._savedAt,state:JSON.parse(snapshot)})
-      .catch(()=>{if(!localOK&&!storageErrorShown){storageErrorShown=true;notify('Armazenamento bloqueado. Faça um backup antes de sair.');}});
+       .catch(()=>{if(!localOK&&!storageErrorShown){storageErrorShown=true;notify('Armazenamento bloqueado. Faça um backup antes de sair.');}});
    }else if(!localOK&&!storageErrorShown){storageErrorShown=true;notify('Não foi possível salvar. Exporte seu backup.');}
  };
  async function restoreFromDatabase(){
    if(!window.TreinaProStore)return;
    try{
      const snapshot=await window.TreinaProStore.load();
-     if(snapshot?.state&&typeof snapshot.state==='object'&&Array.isArray(snapshot.state.history)
-        &&Number(snapshot.savedAt)>Number(state._savedAt||0)){
+     if(snapshot?.state&&typeof snapshot.state==='object' && Array.isArray(snapshot.state.history)
+        && Number(snapshot.savedAt)>Number(state._savedAt||0)){
        state={...defaults(),...snapshot.state};
        if(!DATA.plans[state.plan])state.plan='abc';
        if(!state.sessions||typeof state.sessions!=='object')state.sessions={};
        if(!Array.isArray(state.history))state.history=[];
        if(!state.selected||typeof state.selected!=='object')state.selected={abc:0,quad:0};
        if(!state.next||typeof state.next!=='object')state.next={abc:0,quad:0};
-       freezeOrphanedTimers();render();
-       if(needsWelcome())renderWelcome();else $('welcomeRoot').innerHTML='';
+       // Um navegador fechado à força não pode contabilizar horas fora do treino.
+       freezeOrphanedTimers();
+       render();if(needsWelcome())renderWelcome();else $('welcomeRoot').innerHTML='';
+     }else if(!snapshot && Number(state._savedAt||0)===0){
+       // Migração única de registros antigos, sem remover a cópia existente.
+       save();
      }else if(!snapshot){save();}
-   }catch{/* localStorage continua sendo o fallback. */}
+   }catch{ /* IndexedDB indisponível: armazenamento anterior continua funcional. */ }
  }
 
  const plan =()=>DATA.plans[state.plan];
@@ -193,7 +197,7 @@
  <div class="stack">${day.ex.map((id,i)=>renderExerciseCard(exById[id],i)).join('')}</div></div>
  <aside class="stack right-col"><div class="stat-grid"><div class="stat-card"><span class="stat-label">TREINOS CONCLUÍDOS</span><strong>${completed}</strong><span class="stat-foot">✓ Sua constância</span></div><div class="stat-card"><span class="stat-label">SÉRIES DE HOJE</span><strong>${doneCount()}<small> / ${totalCount()}</small></strong><span class="stat-foot">↗ ${progress}% do treino</span></div></div>
  ${profilePanel()}<div class="coach-card"><div class="coach-heading"><span class="coach-icon">✦</span><div><h3>Seu coach orienta</h3><p class="muted small" style="margin:3px 0 0">Dica para este treino</p></div></div><p>Comece com <b>5–10 minutos</b> de aquecimento leve. ${safe(goalInfo().tip)} Antes de uma série pesada, faça uma ou duas séries leves de preparação.</p><ul><li>Execução controlada acima da carga</li><li>Descanse conforme o exercício</li><li>Interrompa se sentir dor aguda</li></ul>${state.goal!=="hipertrofia"?`<p class="small muted cardio-hint">★ Nos dias livres, considere caminhadas ou outra atividade aeróbica confortável, evoluindo aos poucos. Musculação isolada não garante emagrecimento.</p>`:""}</div>
- <div class="info-card"><div class="card-row"><h3>Progresso do treino</h3><b style="color:var(--lime)">${progress}%</b></div><div class="session-clock"><span>Tempo de treino: <strong id="workoutClock">00:00</strong></span><button class="btn btn-dark btn-sm" data-action="toggle-session-timer">${!sessionTimer()?"Iniciar":sessionTimer().paused?"Retomar":"Pausar"}</button></div><div class="progress-line"><span style="width:${progress}%"></span></div><p class="muted small">${doneCount()} séries realizadas de ${totalCount()} planejadas</p><button class="btn btn-dark" style="width:100%;margin-top:15px" data-action="finish-workout" ${doneCount()===0?'disabled':''}>✓ Finalizar treino</button></div>
+ <div class="info-card"><div class="card-row"><h3>Progresso do treino</h3><b style="color:var(--lime)">${progress}%</b></div><div class="session-clock"><span>Tempo de treino: <strong id="workoutClock">00:00</strong></span><button class="btn btn-dark btn-sm" data-action="toggle-session-timer">${!sessionTimer()?'Iniciar':sessionTimer().paused?'Retomar':'Pausar'}</button></div><div class="progress-line"><span style="width:${progress}%"></span></div><p class="muted small">${doneCount()} séries realizadas de ${totalCount()} planejadas</p><button class="btn btn-dark" style="width:100%;margin-top:15px" data-action="finish-workout" ${doneCount()===0?'disabled':''}>✓ Finalizar treino</button></div>
  <div class="body-card"><h3>Seu plano atual</h3><p>${safe(plan().description)}</p><button class="text-button" data-page="ajustes" style="margin-top:13px">Personalizar →</button><p class="small muted" style="margin-top:12px">${nextSessions} treinos deste plano registrados.</p></div></aside></div>${safetyNote()}`; }
  function renderDayCards(){return `<div class="day-grid ${plan().days.length===3?'three':''}">${plan().days.map((d,i)=>`<button class="day-card ${i===currentDayIndex()?'active':''}" data-action="day" data-index="${i}"><span class="day-letter">${d.letter}</span><strong>${safe(d.short)}</strong><small>${safe(d.title)}</small>${i===currentDayIndex()?'<span class="day-tick">●</span>':''}</button>`).join('')}</div>`;}
  function renderExerciseCard(ex,i){const n=getSetEntries(ex).filter(s=>s.done).length;return `<article class="exercise-card"><img src="${imageFor(ex.id)}" alt="Ilustração das duas posições de ${safe(ex.name)}" loading="lazy"><div><span class="ex-order">${String(i+1).padStart(2,'0')} • ${safe(ex.muscle.toUpperCase())}</span><h3>${safe(ex.name)}</h3><p>${safe(ex.equip)} • ${safe(ex.difficulty)}</p><span class="card-reps">${setsFor(ex)} × ${safe(repsFor(ex))} · ${restFor(ex)}s descanso ${n?` · <b style="color:var(--lime)">${n} ✓</b>`:''}</span></div><button class="open-exercise" data-action="exercise" data-id="${ex.id}" data-track="1" aria-label="Aprender ${safe(ex.name)}">↗</button></article>`;}
@@ -271,6 +275,9 @@
  function safetyNote(){return `<div class="safe-warning">✦ <b>Orientação importante:</b> este aplicativo é educativo e não observa sua postura em tempo real. Pare se houver dor aguda, tontura ou falta de ar incomum. Para começar, prefira pesos leves e orientação presencial se possível.</div>`;}
   // Concise cues for movements whose equipment geometry was revised in 1.9.
   // Orientações curtas também disponíveis nas demonstrações em 2D.
+  const VISUAL_FIRST=new Set(["supino", "supino_inclinado", "crucifixo", "puxada_alta", "remada_baixa", "remada_unilateral", "face_pull", "leg_press", "extensora", "afundo", "romeno", "flexora", "hip_thrust", "abdutora", "bulgaro", "supino_maquina", "step_up", "coice_polia"]);
+  const MOTION_EXPLAINS={"supino": "Barra ou halteres sobem na fase de força e descem com controle.", "supino_inclinado": "Barra ou halteres sobem na fase de força e descem com controle.", "crucifixo": "Os braços se aproximam acima do peito e abrem na volta.", "elevacao_lateral": "Os braços sobem para os lados e retornam devagar.", "triceps_polia": "A mão desce na fase ativa e volta com controle.", "triceps_frances": "As mãos sobem acima da cabeça e descem até a altura inicial.", "puxada_alta": "A barra vem em direção ao peito e retorna para cima.", "remada_baixa": "O pegador ou halter vem para perto do corpo e volta.", "remada_unilateral": "O pegador ou halter vem para perto do corpo e volta.", "face_pull": "O pegador ou halter vem para perto do corpo e volta.", "rosca_direta": "As mãos sobem e voltam sem balançar o corpo.", "rosca_martelo": "As mãos sobem e voltam sem balançar o corpo.", "agachamento": "Quadril desce e depois volta à posição de pé.", "leg_press": "Os pés afastam a plataforma e voltam com controle.", "extensora": "A canela sobe contra o rolo e desce controlando a volta.", "afundo": "O corpo desce na vertical e retorna empurrando o chão.", "romeno": "O tronco inclina enquanto o quadril vai para trás e retorna.", "flexora": "Os calcanhares se aproximam do quadril e voltam.", "panturrilha": "Os calcanhares sobem e descem devagar.", "prancha": "O objetivo é manter alinhamento, não balançar.", "hip_thrust": "O quadril sobe e desce sem exagerar na lombar.", "abdutora": "Os joelhos se afastam e retornam com controle.", "bulgaro": "O corpo desce na vertical e retorna empurrando o chão.", "desenvolvimento": "As mãos sobem acima da cabeça e descem até a altura inicial.", "supino_maquina": "Barra ou halteres sobem na fase de força e descem com controle.", "agachamento_goblet": "Quadril desce e depois volta à posição de pé.", "step_up": "O corpo desce na vertical e retorna empurrando o chão.", "abdominal": "O tronco sobe pouco e retorna devagar.", "coice_polia": "O quadril sobe e desce sem exagerar na lombar.", "__default": "A imagem mostra uma sequência educativa. Primeiro observe a posição inicial, depois veja qual parte do corpo se move e por fim retorne com controle."};
+  function motionExplainMarkup(ex){const text=MOTION_EXPLAINS[ex.id]||MOTION_EXPLAINS['__default'];return `<div class="motion-explain"><strong>Como entender este desenho</strong><p>${safe(text)}</p></div>`;}
   const MOTION_CUES={
    leg_press:['Quadril e lombar apoiados','Joelhos seguem a direção dos pés','Não trave os joelhos'],
    extensora:['Alinhe joelho e eixo do aparelho','O rolo acompanha a canela','Não use impulso'],
@@ -288,14 +295,14 @@
    const cues=MOTION_CUES[ex.id]; if(!cues)return '';
    return `<div class="motion-cue-panel" id="motionCuePanel" aria-label="Três pontos de atenção"><strong>3 pontos para observar</strong><ol>${cues.map(c=>`<li>${safe(c)}</li>`).join('')}</ol></div>`;
   }
- function openModal(id,track){const ex=exById[id];if(!ex)return;const prev=state.history.slice().reverse().find(h=>h.details?.[id]?.sets?.some(s=>s.done));const lastCompleted=prev?.details?.[id]?.sets?.filter(s=>s.done)||[];const pastLoads=lastCompleted.map(s=>parseFloat(s.kg)).filter(n=>Number.isFinite(n)&&n>0);const prevHtml=prev?`<div class="body-card"><h3>Seu último registro</h3><p>${lastCompleted.length} séries concluídas${pastLoads.length?` · até ${Math.max(...pastLoads)} kg`:''} em ${safe(dateString(new Date(prev.date)))}.</p><p style="margin-top:7px">Aumente a carga apenas quando dominar a técnica e completar a faixa de repetições com controle.</p></div>`:'';activeModal={id,track:!!track,viewerMode:'2d',guideStep:0,demoMode:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'still':'motion'};clearInterval(restTimer);$('modalRoot').innerHTML=`<div class="modal-overlay" id="modalOverlay"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-header"><div><span class="eyebrow">${safe(ex.muscle.toUpperCase())} • GUIA DE EXECUÇÃO</span><h2 id="modalTitle">${safe(ex.name)}</h2><p>${safe(ex.equip)} · ${safe(ex.difficulty)}</p></div><button class="close-btn" data-action="close" aria-label="Fechar">×</button></div><div class="modal-grid"><div class="demo-side"><div class="motion-title"><span class="eyebrow">DEMONSTRAÇÃO PASSO A PASSO</span><span class="motion-pill" id="motionLabel">● Ilustração animada</span></div><div class="viewer-tabs" role="group" aria-label="Tipo de demonstração"><button data-action="viewer-mode" data-viewer="2d" class="view-tab active" aria-pressed="true">▶ Animado</button><button data-action="viewer-mode" data-viewer="guide" class="view-tab" aria-pressed="false">① Etapas</button></div><section class="guide-stage" id="guideStage" hidden aria-label="Execução em três etapas"><div class="guide-picture"><img class="guide-frame" id="guideFrame" src="${frameFor(ex.id,'start')}" alt="${safe(ex.name)} — posição inicial"></div><div class="guide-copy" aria-live="polite"><span class="guide-counter" id="guideCounter">PASSO 1 DE 3</span><h3 id="guideHeading">Prepare sua posição</h3><p id="guideDescription">${safe(ex.steps[0])}</p></div><div class="guide-controls"><button data-action="guide-prev" class="guide-button" id="guidePrev" disabled>← Voltar</button><button data-action="guide-speak" class="guide-button guide-audio" aria-label="Ouvir esta etapa">♫ Ouvir</button><button data-action="guide-next" class="guide-button guide-primary" id="guideNext">Próximo →</button></div></section>${motionCueMarkup(ex)}<img class="demo-image motion-image" id="motionImage" src="${demoFor(ex.id,activeModal.demoMode)}" alt="Demonstração esquemática ${safe(ex.name)} entre a posição inicial e a fase principal"><div class="motion-controls" id="motionControls" role="group" aria-label="Controles da demonstração"><button data-action="demo-mode" data-mode="motion" class="motion-button ${activeModal.demoMode==='motion'?'active':''}" aria-pressed="${activeModal.demoMode==='motion'}">▶ Normal</button><button data-action="demo-mode" data-mode="motion-slow" class="motion-button ${activeModal.demoMode==='motion-slow'?'active':''}" aria-pressed="${activeModal.demoMode==='motion-slow'}">◷ Devagar</button><button data-action="demo-mode" data-mode="still" class="motion-button ${activeModal.demoMode==='still'?'active':''}" aria-pressed="${activeModal.demoMode==='still'}">⏸ Pausar</button><button data-action="demo-mode" data-mode="poses" class="motion-button" aria-pressed="false">▣ Posições</button></div><p class="motion-caption" id="motionCaption">Movimento ilustrativo para aprender a sequência. Não mede nem corrige sua postura.</p>${muscleDiagram(ex.muscle)}${coachPanel(ex)}<div class="card-row"><div><h3>Seu treinador explica</h3><p class="muted small" style="margin-top:5px">Passo a passo com foco em segurança</p></div><button class="btn btn-dark btn-sm" data-action="speak">♫ Ouvir</button></div>${ex.steps.map((s,i)=>`<div class="step-item"><span>${i+1}</span><p>${safe(s)}</p></div>`).join('')}<div class="cue-box"><b>✓ Dica do personal</b><br>${safe(ex.tip)}</div><div class="cue-box warning"><b>! Evite este erro</b><br>${safe(ex.mistake)}</div><p class="muted small" style="margin-top:12px">Respiração: ${safe(ex.breath)}</p></div><div class="steps-side"><div class="card-row"><h3>${track?'Registrar suas séries':'Plano sugerido'}</h3>${pill(ex.muscle)}</div><div class="stat-grid" style="margin-top:13px"><div class="stat-card"><span class="stat-label">SÉRIES</span><strong>${setsFor(ex)}</strong></div><div class="stat-card"><span class="stat-label">REPETIÇÕES</span><strong style="font-size:22px">${safe(repsFor(ex))}</strong></div></div><p class="personal-target">${safe(goalInfo().icon+" "+goalInfo().name)} · ${safe(state.level)}. Adapte a carga mantendo o movimento controlado.</p>${prevHtml}<div class="body-card"><h3>Descanso recomendado</h3><p>${restFor(ex)} segundos entre as séries. Aguarde recuperar o fôlego para preservar a técnica.</p></div>${track?`<div class="set-tracker"><div class="card-row"><h3>Suas séries</h3><span class="muted small">Carga em kg (opcional)</span></div><div id="setList">${renderSetList(ex)}</div><div id="restContainer"></div><button class="btn btn-dark btn-sm" data-action="rest-manual" style="margin-top:14px">◷ Iniciar descanso de ${restFor(ex)}s</button></div>`:`<div class="body-card"><h3>Quer treinar agora?</h3><p>Escolha um dia do plano para registrar suas séries, carga e repetições. Aqui você pode estudar o movimento.</p><button class="btn btn-primary btn-sm" style="margin-top:12px" data-action="go-workout">Ir para o meu treino →</button></div>`}</div></div><div class="modal-bottom"><span class="muted small">Aprenda o movimento antes de aumentar a carga.</span><button class="btn btn-primary btn-sm" data-action="close">Entendi ✓</button></div></section></div>`;document.body.style.overflow='hidden';if(track){decorateSetList(ex);renderRest();if(activeRest()?.endAt)restTimer=setInterval(renderRest,1000);}const close=$('modalRoot').querySelector('.close-btn');close?.focus();}
+ function openModal(id,track){const ex=exById[id];if(!ex)return;const prev=state.history.slice().reverse().find(h=>h.details?.[id]?.sets?.some(s=>s.done));const lastCompleted=prev?.details?.[id]?.sets?.filter(s=>s.done)||[];const pastLoads=lastCompleted.map(s=>parseFloat(s.kg)).filter(n=>Number.isFinite(n)&&n>0);const prevHtml=prev?`<div class="body-card"><h3>Seu último registro</h3><p>${lastCompleted.length} séries concluídas${pastLoads.length?` · até ${Math.max(...pastLoads)} kg`:''} em ${safe(dateString(new Date(prev.date)))}.</p><p style="margin-top:7px">Aumente a carga apenas quando dominar a técnica e completar a faixa de repetições com controle.</p></div>`:'';const prefersReduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;activeModal={id,track:!!track,viewerMode:'2d',guideStep:0,demoMode:prefersReduced?'still':(VISUAL_FIRST.has(id)?'poses':'motion')};clearInterval(restTimer);$('modalRoot').innerHTML=`<div class="modal-overlay" id="modalOverlay"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-header"><div><span class="eyebrow">${safe(ex.muscle.toUpperCase())} • GUIA DE EXECUÇÃO</span><h2 id="modalTitle">${safe(ex.name)}</h2><p>${safe(ex.equip)} · ${safe(ex.difficulty)}</p></div><button class="close-btn" data-action="close" aria-label="Fechar">×</button></div><div class="modal-grid"><div class="demo-side"><div class="motion-title"><span class="eyebrow">DEMONSTRAÇÃO PASSO A PASSO</span><span class="motion-pill" id="motionLabel">● Ilustração animada</span></div><div class="viewer-tabs" role="group" aria-label="Tipo de demonstração"><button data-action="viewer-mode" data-viewer="2d" class="view-tab active" aria-pressed="true">▶ Animado</button><button data-action="viewer-mode" data-viewer="guide" class="view-tab" aria-pressed="false">① Etapas</button></div><section class="guide-stage" id="guideStage" hidden aria-label="Execução em três etapas"><div class="guide-picture"><img class="guide-frame" id="guideFrame" src="${frameFor(ex.id,'start')}" alt="${safe(ex.name)} — posição inicial"></div><div class="guide-copy" aria-live="polite"><span class="guide-counter" id="guideCounter">PASSO 1 DE 3</span><h3 id="guideHeading">Prepare sua posição</h3><p id="guideDescription">${safe(ex.steps[0])}</p></div><div class="guide-controls"><button data-action="guide-prev" class="guide-button" id="guidePrev" disabled>← Voltar</button><button data-action="guide-speak" class="guide-button guide-audio" aria-label="Ouvir esta etapa">♫ Ouvir</button><button data-action="guide-next" class="guide-button guide-primary" id="guideNext">Próximo →</button></div></section>${motionCueMarkup(ex)}<img class="demo-image motion-image" id="motionImage" src="${activeModal.demoMode==='poses'?imageFor(ex.id):demoFor(ex.id,activeModal.demoMode)}" alt="${activeModal.demoMode==='poses'?`Posição inicial e final de ${safe(ex.name)}`:`Demonstração esquemática ${safe(ex.name)} entre a posição inicial e a fase principal`}"><div class="motion-controls" id="motionControls" role="group" aria-label="Controles da demonstração"><button data-action="demo-mode" data-mode="motion" class="motion-button ${activeModal.demoMode==='motion'?'active':''}" aria-pressed="${activeModal.demoMode==='motion'}">▶ Normal</button><button data-action="demo-mode" data-mode="motion-slow" class="motion-button ${activeModal.demoMode==='motion-slow'?'active':''}" aria-pressed="${activeModal.demoMode==='motion-slow'}">◷ Devagar</button><button data-action="demo-mode" data-mode="still" class="motion-button ${activeModal.demoMode==='still'?'active':''}" aria-pressed="${activeModal.demoMode==='still'}">⏸ Pausar</button><button data-action="demo-mode" data-mode="poses" class="motion-button ${activeModal.demoMode==='poses'?'active':''}" aria-pressed="${activeModal.demoMode==='poses'}">▣ Posições</button></div><p class="motion-caption" id="motionCaption">${activeModal.demoMode==='poses'?'Compare a posição inicial com a fase principal. Primeiro veja onde o corpo começa; depois veja o que realmente se move.':(activeModal.demoMode==='still'?'Demonstração pausada. Use esta visão para localizar braços, pernas e equipamento antes de assistir ao movimento.':(activeModal.demoMode==='motion-slow'?'Animação lenta. Repare especialmente na parte do corpo destacada na explicação abaixo.':'Animação em repetição. Observe a direção principal do movimento antes de copiar a sequência.'))}</p>${motionExplainMarkup(ex)}${muscleDiagram(ex.muscle)}${coachPanel(ex)}<div class="card-row"><div><h3>Seu treinador explica</h3><p class="muted small" style="margin-top:5px">Passo a passo com foco em segurança</p></div><button class="btn btn-dark btn-sm" data-action="speak">♫ Ouvir</button></div>${ex.steps.map((s,i)=>`<div class="step-item"><span>${i+1}</span><p>${safe(s)}</p></div>`).join('')}<div class="cue-box"><b>✓ Dica do personal</b><br>${safe(ex.tip)}</div><div class="cue-box warning"><b>! Evite este erro</b><br>${safe(ex.mistake)}</div><p class="muted small" style="margin-top:12px">Respiração: ${safe(ex.breath)}</p></div><div class="steps-side"><div class="card-row"><h3>${track?'Registrar suas séries':'Plano sugerido'}</h3>${pill(ex.muscle)}</div><div class="stat-grid" style="margin-top:13px"><div class="stat-card"><span class="stat-label">SÉRIES</span><strong>${setsFor(ex)}</strong></div><div class="stat-card"><span class="stat-label">REPETIÇÕES</span><strong style="font-size:22px">${safe(repsFor(ex))}</strong></div></div><p class="personal-target">${safe(goalInfo().icon+" "+goalInfo().name)} · ${safe(state.level)}. Adapte a carga mantendo o movimento controlado.</p>${prevHtml}<div class="body-card"><h3>Descanso recomendado</h3><p>${restFor(ex)} segundos entre as séries. Aguarde recuperar o fôlego para preservar a técnica.</p></div>${track?`<div class="set-tracker"><div class="card-row"><h3>Suas séries</h3><span class="muted small">Carga em kg (opcional)</span></div>${previousExerciseSets(ex.id).length?`<div class="repeat-loads"><button type="button" class="btn btn-dark btn-sm" data-action="copy-last">↺ Usar valores anteriores</button><small>Preenche campos vazios sem marcar séries feitas.</small></div>`:''}<div id="setList">${renderSetList(ex)}</div><div id="restContainer"></div><button class="btn btn-dark btn-sm" data-action="rest-manual" style="margin-top:14px">◷ Iniciar descanso de ${restFor(ex)}s</button></div>`:`<div class="body-card"><h3>Quer treinar agora?</h3><p>Escolha um dia do plano para registrar suas séries, carga e repetições. Aqui você pode estudar o movimento.</p><button class="btn btn-primary btn-sm" style="margin-top:12px" data-action="go-workout">Ir para o meu treino →</button></div>`}</div></div><div class="modal-bottom"><span class="muted small">Aprenda o movimento antes de aumentar a carga.</span><button class="btn btn-primary btn-sm" data-action="close">Entendi ✓</button></div></section></div>`;document.body.style.overflow='hidden';if(track){renderRest();if(activeRest()?.endAt)restTimer=setInterval(renderRest,1000);}const close=$('modalRoot').querySelector('.close-btn');close?.focus();}
  function changeDemo(mode){
    if(!activeModal || !['motion','motion-slow','still','poses'].includes(mode))return;
    activeModal.demoMode=mode;
    const el=$('motionImage');if(!el)return;
    el.src=mode==='poses'?imageFor(activeModal.id):demoFor(activeModal.id,mode);
    el.alt=mode==='poses'?'Posição inicial e final lado a lado':'Movimento esquemático de '+exById[activeModal.id].name;
-   const caption=$('motionCaption');if(caption) caption.textContent=mode==='poses'?'Compare a posição inicial e a fase principal do movimento.':mode==='still'?'Demonstração pausada na posição inicial.':'Animação esquemática em repetição. Observe a técnica descrita abaixo.';
+   const caption=$('motionCaption');if(caption) caption.textContent=mode==='poses'?'Compare a posição inicial com a fase principal. Primeiro veja onde o corpo começa; depois veja o que realmente se move.':mode==='still'?'Demonstração pausada. Use esta visão para localizar braços, pernas e equipamento antes de assistir ao movimento.':mode==='motion-slow'?'Animação lenta. Repare especialmente na parte do corpo destacada na explicação abaixo.':'Animação em repetição. Observe a direção principal do movimento antes de copiar a sequência.';
    document.querySelectorAll('.motion-button').forEach(btn=>{const selected=btn.dataset.mode===mode;btn.classList.toggle('active',selected);btn.setAttribute('aria-pressed',String(selected));});
  }
  function renderGuideStep(){
@@ -312,17 +319,17 @@
  }
  function guideMove(delta){if(!activeModal || activeModal.viewerMode!=='guide')return;activeModal.guideStep=Math.max(0,Math.min(2,(activeModal.guideStep||0)+delta));renderGuideStep();}
  function guideSpeak(){if(!activeModal)return;const ex=exById[activeModal.id],i=activeModal.guideStep||0;if(!('speechSynthesis'in window)){notify('Voz indisponível neste navegador.');return;}try{speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(`Passo ${i+1}. ${ex.steps[i]||ex.tip}`);utterance.lang='pt-BR';utterance.rate=.87;speechSynthesis.speak(utterance);}catch{notify('Não foi possível reproduzir a voz.');}}
- function changeViewer(mode){
-   if(!activeModal || !['2d','guide'].includes(mode))return;
-   const useGuide=mode==='guide';activeModal.viewerMode=mode;
-   if($('motionImage'))$('motionImage').hidden=useGuide;
-   if($('motionControls'))$('motionControls').hidden=useGuide;
-   if($('guideStage'))$('guideStage').hidden=!useGuide;
-   if(useGuide)renderGuideStep();
-   if($('motionLabel'))$('motionLabel').textContent=useGuide?'● Posições ampliadas':'● Ilustração animada';
-   document.querySelectorAll('.view-tab').forEach(b=>{const on=b.dataset.viewer===mode;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));});
-   const caption=$('motionCaption');if(caption)caption.textContent=useGuide?'Toque em Próximo para ver cada posição ampliada e ler a explicação.':'Animação ilustrativa. Observe a execução, sem copiar a postura cegamente.';
- }
+  function changeViewer(mode){
+    if(!activeModal || !['2d','guide'].includes(mode))return;
+    const useGuide=mode==='guide';activeModal.viewerMode=mode;
+    if($('motionImage'))$('motionImage').hidden=useGuide;
+    if($('motionControls'))$('motionControls').hidden=useGuide;
+    if($('guideStage'))$('guideStage').hidden=!useGuide;
+    if(useGuide)renderGuideStep();
+    if($('motionLabel'))$('motionLabel').textContent=useGuide?'● Posições ampliadas':'● Ilustração animada';
+    document.querySelectorAll('.view-tab').forEach(b=>{const on=b.dataset.viewer===mode;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));});
+    const caption=$('motionCaption');if(caption)caption.textContent=useGuide?'Toque em Próximo para ver cada posição ampliada e ler a explicação.':'Animação ilustrativa. Observe a execução, sem copiar a postura cegamente.';
+  }
  const MACHINE_SETUPS={
   leg_press:['Leg press 45°','Ajuste o banco para manter quadril e lombar apoiados durante a descida.','Não solte a trava de segurança até estar bem posicionado(a).','Trava • encosto • plataforma'],
   extensora:['Cadeira extensora','Alinhe o eixo do aparelho ao joelho e coloque o rolo sobre a parte baixa da canela.','Evite usar impulso ou movimentar o quadril para levantar a carga.','Encosto • eixo do joelho • rolo'],
@@ -349,8 +356,7 @@
    <div class="coach-equipment"><span class="eyebrow">PREPARE O EQUIPAMENTO</span><div class="coach-equipment-main"><div class="coach-equipment-illustration" aria-hidden="true"><svg viewBox="0 0 144 126" xmlns="http://www.w3.org/2000/svg"><path d="M19 111H127M31 110V21H110V110M42 31H99M48 41H90" stroke="#789a97" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><rect x="57" y="53" width="26" height="42" rx="5" fill="#324e59" stroke="#c6f65b" stroke-width="2"/><path d="M24 75H54M84 77H115M29 78V103M114 77V103" stroke="#c6f65b" stroke-width="7" stroke-linecap="round"/><circle cx="39" cy="21" r="8" fill="#c6f65b"/><circle cx="110" cy="21" r="8" fill="#c6f65b"/></svg></div><div><h4>${safe(equipment[0])}</h4><p>${safe(equipment[1])}</p><small>${safe(equipment[3])}</small></div></div><p class="coach-caution">Atenção: ${safe(equipment[2])}</p></div>
    </section>`;
  }
-
- // Recupera só as séries feitas; jamais carrega um "feito" para a sessão atual.
+ // Última sessão concluída do exercício, preservando índices e sem copiar status "feito".
  function previousExerciseSets(id){
    for(let i=state.history.length-1;i>=0;i--){
      const entries=state.history[i]?.details?.[id]?.sets;
@@ -358,48 +364,36 @@
    }
    return [];
  }
- function decorateSetList(ex){
-   const list=$('setList');if(!list)return;
-   const previous=previousExerciseSets(ex.id);
-   if(previous.some(row=>row?.done)){
-     const toolbar=document.createElement('div');toolbar.className='repeat-loads';
-     const btn=document.createElement('button');btn.type='button';btn.className='btn btn-dark btn-sm';
-     btn.dataset.action='copy-last';btn.textContent='↺ Usar valores anteriores';
-     const help=document.createElement('small');help.textContent='Preenche só campos vazios, sem concluir séries.';
-     toolbar.append(btn,help);list.prepend(toolbar);
-   }
-   list.querySelectorAll('.set-row').forEach((row,i)=>{
-     const old=previous[i];if(!old?.done)return;
-     const parts=[];
-     if(String(old.kg??'').trim())parts.push(String(old.kg).trim()+' kg');
-     if(String(old.reps??'').trim())parts.push(String(old.reps).trim()+' rep');
-     if(!parts.length)return;
-     const note=document.createElement('small');note.className='previous-set';
-     note.textContent='Anterior: '+parts.join(' × ');row.append(note);
-   });
-   list.querySelectorAll('.set-done').forEach(button=>button.setAttribute('aria-pressed',String(button.classList.contains('finished'))));
- }
  function copyPreviousSets(){
    if(!activeModal?.track)return;
    const ex=exById[activeModal.id],previous=previousExerciseSets(ex.id);
-   if(!previous.length){notify('Não há séries anteriores deste exercício.');return;}
-   const ses=sessionFor(),entry=ses[ex.id]||(ses[ex.id]={sets:[]});
-   const current=getSetEntries(ex).map(row=>({...row}));let changes=0;
+   if(!previous.length){notify('Ainda não há séries anteriores desse exercício.');return;}
+   const entry=sessionFor()[ex.id]||(sessionFor()[ex.id]={sets:[]});
+   const current=getSetEntries(ex).map(row=>({...row}));let changed=0;
    for(let i=0;i<current.length;i++){
      const old=previous[i];if(!old?.done||current[i].done)continue;
      const kg=String(old.kg??'').trim(),reps=String(old.reps??'').trim();
-     if(!String(current[i].kg??'').trim()&&kg&&Number.isFinite(Number(kg.replace(',','.')))&&Number(kg.replace(',','.'))>=0&&Number(kg.replace(',','.'))<=1000){current[i].kg=kg.replace(',','.');changes++;}
-     if(!String(current[i].reps??'').trim()&&reps&&reps.length<=12){current[i].reps=reps;changes++;}
+     if(!String(current[i].kg??'').trim()&&kg&&Number.isFinite(Number(kg.replace(',','.')))&&Number(kg.replace(',','.'))>=0&&Number(kg.replace(',','.'))<=1000){current[i].kg=kg.replace(',','.');changed++;}
+     if(!String(current[i].reps??'').trim()&&reps.length<=12&&reps){current[i].reps=reps;changed++;}
    }
-   if(!changes){notify('Nada foi substituído. As séries já estão preenchidas.');return;}
-   entry.sets=current;save();$('setList').innerHTML=renderSetList(ex);decorateSetList(ex);
+   if(!changed){notify('As séries já estão preenchidas. Nada foi substituído.');return;}
+   entry.sets=current;save();$('setList').innerHTML=renderSetList(ex);
    notify('Valores anteriores copiados. Confira antes de concluir.');
  }
- function renderSetList(ex){const sets=getSetEntries(ex);return sets.map((s,i)=>`<div class="set-row"><span class="set-index">${i+1}ª</span><label><span class="hidden">Peso da série ${i+1} em kg</span><input class="weight-input" type="number" inputmode="decimal" min="0" max="1000" step="0.5" aria-label="Peso da série ${i+1} em kg" placeholder="kg" data-set="${i}" data-field="kg" value="${safe(s.kg)}"></label><label><span class="hidden">Repetições da série ${i+1}</span><input class="reps-input" type="text" maxlength="12" aria-label="Repetições da série ${i+1}" placeholder="reps" data-set="${i}" data-field="reps" value="${safe(s.reps)}"></label><button class="set-done ${s.done?'finished':''}" data-action="toggle-set" data-index="${i}" aria-label="${s.done?'Desmarcar':'Concluir'} série ${i+1}">${s.done?'✓ Feita':'✓ Feito'}</button></div>`).join('');}
+ function renderSetList(ex){
+   const sets=getSetEntries(ex),prior=previousExerciseSets(ex.id);
+   return sets.map((entry,i)=>{
+     const last=prior[i]?.done?prior[i]:null;
+     const kg=String(last?.kg??'').trim(),reps=String(last?.reps??'').trim();
+     const previous=[kg?`${safe(kg)} kg`:'',reps?`${safe(reps)} rep`:''].filter(Boolean).join(' × ');
+     return `<div class="set-row ${entry.done?'set-completed':''}"><span class="set-index">${i+1}ª</span><label><span class="hidden">Peso da série ${i+1} em kg</span><input class="weight-input" type="number" inputmode="decimal" min="0" max="1000" step="0.5" aria-label="Peso da série ${i+1} em kg" placeholder="kg" data-set="${i}" data-field="kg" value="${safe(entry.kg)}"></label><label><span class="hidden">Repetições da série ${i+1}</span><input class="reps-input" type="text" maxlength="12" aria-label="Repetições da série ${i+1}" placeholder="reps" data-set="${i}" data-field="reps" value="${safe(entry.reps)}"></label><button class="set-done ${entry.done?'finished':''}" data-action="toggle-set" data-index="${i}" aria-pressed="${!!entry.done}" aria-label="${entry.done?'Desmarcar':'Concluir'} série ${i+1}">${entry.done?'✓ Feita':'✓ Feito'}</button>${previous?`<small class="previous-set">Anterior: ${previous}</small>`:''}</div>`;
+   }).join('');
+ }
+
  function closeModal(){const hadTracker=!!activeModal?.track;activeModal=null;clearInterval(restTimer);$('modalRoot').innerHTML='';document.body.style.overflow='';try{speechSynthesis.cancel()}catch{}window.TreinaProCoach?.stop();if(hadTracker&&page==='inicio')render();}
  function syncSetField(target){if(!activeModal?.track)return;const ex=exById[activeModal.id],n=Number(target.dataset.set),field=target.dataset.field;if(!ex||!['kg','reps'].includes(field)||!Number.isInteger(n)||n<0||n>=setsFor(ex))return;const ses=sessionFor(),entry=ses[ex.id]||(ses[ex.id]={sets:[]});entry.sets[n]=entry.sets[n]||{done:false,kg:'',reps:''};entry.sets[n][field]=String(target.value).slice(0,12);save();}
- function toggleSet(n){if(!activeModal?.track)return;startSessionTimer();const ex=exById[activeModal.id],all=getSetEntries(ex);if(!Number.isInteger(n)||n<0||n>=all.length)return;const ses=sessionFor(),entry=ses[ex.id]||(ses[ex.id]={sets:[]});entry.sets=all;entry.sets[n].done=!entry.sets[n].done;const marked=entry.sets[n].done;save();$('setList').innerHTML=renderSetList(ex);decorateSetList(ex);if(marked){if(entry.sets.some(x=>!x.done))startRest(restFor(ex));else clearRest('✓ Exercício concluído!');notify('Série concluída! Bom trabalho.');}else{notify('Série desmarcada.');}}
- // Descanso com estado preservado por sessão, inclusive após fechar o exercício.
+ function toggleSet(n){if(!activeModal?.track)return;startSessionTimer();const ex=exById[activeModal.id],all=getSetEntries(ex);if(!Number.isInteger(n)||n<0||n>=all.length)return;const ses=sessionFor(),entry=ses[ex.id]||(ses[ex.id]={sets:[]});entry.sets=all;entry.sets[n].done=!entry.sets[n].done;const marked=entry.sets[n].done;save();$('setList').innerHTML=renderSetList(ex);if(marked){if(entry.sets.some(s=>!s.done))startRest(restFor(ex));else clearRest('✓ Exercício concluído!');notify('Série concluída! Bom trabalho.');}else{notify('Série desmarcada.');}}
+ // Descanso é salvo na sessão atual, inclusive ao fechar a explicação ou atualizar a página.
  function activeRest(){const rest=sessionFor()._rest;return rest&&rest.exerciseId===activeModal?.id?rest:null;}
  function restRemaining(rest=activeRest()){
    if(!rest)return 0;
@@ -407,30 +401,30 @@
  }
  function clearRest(message=''){
    const ses=sessionFor();delete ses._rest;clearInterval(restTimer);restTimer=null;save();
-   const box=$('restContainer');if(box){box.textContent=message;box.setAttribute('role','status');}
+   if($('restContainer'))$('restContainer').innerHTML=message?`<div class="cue-box" role="status">${message}</div>`:'';
  }
  function startRest(seconds){
    if(!activeModal?.track)return;
    const amount=Math.max(15,Math.min(600,Math.round(Number(seconds)||60)));
    sessionFor()._rest={exerciseId:activeModal.id,paused:false,remaining:amount*1000,endAt:Date.now()+amount*1000};
-   save();clearInterval(restTimer);renderRest(true);restTimer=setInterval(renderRest,1000);
+   save();clearInterval(restTimer);renderRest();restTimer=setInterval(renderRest,1000);
  }
  function changeRest(delta){
    const rest=activeRest();if(!rest)return;
    const remaining=Math.max(0,(rest.paused?rest.remaining:rest.endAt-Date.now())+delta*1000);
-   if(!remaining){clearRest('✓ Descanso concluído. Continue quando estiver pronto(a).');return;}
+   if(remaining<=0){clearRest('✓ Descanso concluído. Continue quando estiver pronto(a).');return;}
    rest.remaining=remaining;if(!rest.paused)rest.endAt=Date.now()+remaining;
    save();renderRest(true);
  }
  function pauseOrResumeRest(){
    const rest=activeRest();if(!rest)return;
    if(rest.paused){rest.endAt=Date.now()+Math.max(1000,rest.remaining);rest.paused=false;}
-   else{rest.remaining=Math.max(0,rest.endAt-Date.now());rest.paused=true;}
+   else {rest.remaining=Math.max(0,rest.endAt-Date.now());rest.paused=true;}
    save();renderRest(true);
  }
  function renderRest(force=false){
    const box=$('restContainer');if(!box||!activeModal?.track)return;
-   const rest=activeRest();if(!rest){if(force)box.textContent='';return;}
+   const rest=activeRest();if(!rest){if(force)box.innerHTML='';return;}
    const seconds=restRemaining(rest);
    if(!rest.paused&&seconds===0){
      clearRest('✓ Descanso terminado! Quando estiver pronto(a), faça a próxima série.');
@@ -438,17 +432,7 @@
      return;
    }
    if(force||!box.querySelector('.rest-panel')){
-     const panel=document.createElement('div');panel.className='rest-panel';panel.setAttribute('aria-label','Cronômetro de descanso');
-     const heading=document.createElement('div');heading.className='rest-head';
-     const clock=document.createElement('strong');clock.className='rest-clock';clock.setAttribute('role','timer');clock.textContent=formatTime(seconds);
-     const status=document.createElement('span');status.className='rest-status';status.textContent=rest.paused?'Pausado':'Descansando';
-     heading.append(clock,status);
-     const actions=document.createElement('div');actions.className='rest-actions';
-     for(const [action,label] of [['rest-minus','−15s'],['rest-pause',rest.paused?'▶ Retomar':'⏸ Pausar'],['rest-plus','+15s'],['skip-rest','Pular']]){
-       const button=document.createElement('button');button.type='button';button.dataset.action=action;button.textContent=label;
-       actions.append(button);
-     }
-     panel.append(heading,actions);box.replaceChildren(panel);box.removeAttribute('role');
+     box.innerHTML=`<div class="rest-panel" aria-label="Cronômetro de descanso"><div class="rest-head"><strong class="rest-clock" role="timer">${formatTime(seconds)}</strong><span class="rest-status">${rest.paused?'Pausado':'Descansando'}</span></div><div class="rest-actions"><button type="button" data-action="rest-minus" aria-label="Reduzir descanso em 15 segundos">−15s</button><button type="button" data-action="rest-pause">${rest.paused?'▶ Retomar':'⏸ Pausar'}</button><button type="button" data-action="rest-plus" aria-label="Adicionar 15 segundos ao descanso">+15s</button><button type="button" data-action="skip-rest">Pular</button></div></div>`;
    }else{
      const clock=box.querySelector('.rest-clock');if(clock)clock.textContent=formatTime(seconds);
    }
@@ -457,14 +441,17 @@
  function elapsedWorkoutMs(timer=sessionTimer()){
    if(!timer)return 0;
    const base=Math.max(0,Number(timer.elapsedMs)||0);
-   const running=timer.runningSince&&!timer.paused?Math.max(0,Date.now()-Number(timer.runningSince)):0;
+   const running=timer.runningSince&& !timer.paused ? Math.max(0,Date.now()-Number(timer.runningSince)):0;
    return Math.min(72*3600000,base+running);
  }
  function refreshWorkoutClock(){const el=$('workoutClock');if(el){const timer=sessionTimer();el.textContent=timer?formatTime(Math.floor(elapsedWorkoutMs(timer)/1000)):'00:00';}}
  function startSessionTimer(){const ses=sessionFor();if(!ses._timer){ses._timer={startedAt:new Date().toISOString(),elapsedMs:0,runningSince:Date.now(),paused:false,autoPaused:false};save();}refreshWorkoutClock();}
- function pauseSessionTimer(auto=false){const timer=sessionTimer();if(!timer||timer.paused)return;timer.elapsedMs=elapsedWorkoutMs(timer);timer.runningSince=null;timer.paused=true;timer.autoPaused=!!auto;save();refreshWorkoutClock();}
- function resumeSessionTimer(){const timer=sessionTimer();if(!timer||!timer.paused)return;timer.paused=false;timer.autoPaused=false;timer.runningSince=Date.now();save();refreshWorkoutClock();}
+ function pauseSessionTimer(auto=false){const timer=sessionTimer();if(!timer||timer.paused)return;
+   timer.elapsedMs=elapsedWorkoutMs(timer);timer.runningSince=null;timer.paused=true;timer.autoPaused=!!auto;save();refreshWorkoutClock();}
+ function resumeSessionTimer(){const timer=sessionTimer();if(!timer||!timer.paused)return;
+   timer.paused=false;timer.autoPaused=false;timer.runningSince=Date.now();save();refreshWorkoutClock();}
  function freezeOrphanedTimers(){Object.values(state.sessions||{}).forEach(s=>{const t=s?._timer;if(t?.runningSince){t.runningSince=null;t.paused=true;t.autoPaused=true;}});}
+ // Restauração de tela após bloqueio/fechamento é conservadora: não conta horas ausentes.
  freezeOrphanedTimers();
  document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseSessionTimer(true);else{const t=sessionTimer();if(t?.autoPaused)resumeSessionTimer();}});
  window.addEventListener('pagehide',()=>pauseSessionTimer(true));
