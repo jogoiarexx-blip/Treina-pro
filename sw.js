@@ -1,5 +1,5 @@
 /* TreinaPro REV4: cache resiliente, sem travar o primeiro uso para baixar todas as ilustrações. */
-const VERSION='treinapro-v2.0-rev4';
+const VERSION='treinapro-v2.0-rev5';
 const SHELL=[ './', './index.html','./style.css','./pwa.css','./data.js','./storage.js','./app.js','./coach.js','./pwa.js','./manifest.webmanifest','./assets/icon-192.png','./assets/icon-512.png','./assets/favicon.svg'];
 const IDS=['supino','supino_inclinado','crucifixo','elevacao_lateral','triceps_polia','triceps_frances','puxada_alta','remada_baixa','remada_unilateral','face_pull','rosca_direta','rosca_martelo','agachamento','leg_press','extensora','afundo','romeno','flexora','panturrilha','prancha','hip_thrust','abdutora','bulgaro','desenvolvimento','supino_maquina','agachamento_goblet','step_up','abdominal','coice_polia'];
 const THUMBNAILS=IDS.map(id=>`./assets/exercises/${id}.svg`);
