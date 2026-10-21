@@ -1,31 +1,24 @@
-# TreinaPro Personal Digital v1.9
+# TreinaPro Personal Digital v1.9.1 — somente 2D
 
-Evolução incremental da versão 1.8. **Mesmo armazenamento `treinapro-personal-v1`**: não altera perfis, registros, planos, carga nem histórico.
+Atualização da v1.9 com remoção **completa do modo 3D**, para simplificar o aplicativo e reduzir processamento nos celulares.
 
-## Melhorias concretas
+## Alterações
 
-- **Leg press 45°:** joelho calculado por segmentos de comprimento constante; plataforma e trilhos movem-se sincronizados com os pés.
-- **Cadeira extensora:** joelho fica fixo, tornozelo percorre um arco e rolo móvel acompanha a canela.
-- **Agachamento búlgaro:** pé traseiro apoiado em banco e pé dianteiro estável.
-- **Step-up:** apoio do pé e banco/caixa representados, corpo sobe de forma mais clara.
-- **Coice na polia:** boneco em pé com um pé plantado e outra perna estendendo o quadril; cabo acompanha tornozeleira.
-- **Cadeira abdutora:** apoios laterais seguem os joelhos.
-- **Hip thrust:** barra acompanha elevação da pelve.
-- **11 exercícios de pernas e glúteos:** três alertas visuais curtos no modo 3D; outros exercícios mantêm orientações antigas.
-- **Baixo consumo:** mantém limites de quadros e pausa em segundo plano. Com animação pausada, arrastar ou redimensionar repinta a cena.
-- **Sem aumento de complexidade:** guias Animado / Etapas / 3D, botões e histórico preservados.
+- Os exercícios agora mostram **Animado** e **Etapas**; o terceiro modo 3D foi excluído.
+- `viewer3d.js`, carregamento do script, elementos de canvas, controles do boneco e estilos associados removidos.
+- Dicas breves dos 11 exercícios de membros inferiores continuam disponíveis na explicação, sem depender do 3D.
+- `sw.js` atualizado para `treinapro-v1.9.1-2d`, deixando de incluir o arquivo 3D e renovando o cache de instalação.
+- Scripts de geração do HTML portátil atualizados para incorporar somente os recursos 2D.
+- Preservados os 29 exercícios, programa ABC, treino alternado inferiores/superiores, calendário, voz, cargas e histórico.
 
-**Atenção:** os modelos seguem sendo esquemáticos e não são validados por fisioterapeutas nem especialistas de biomecânica; não detectam erros de postura e não substituem instrutor presencial. A amplitude deve ser confortável, sem dor.
+O armazenamento continua `treinapro-personal-v1`; **não apague dados do site** ao atualizar se quiser manter o histórico. Ao trocar de endereço ou de navegador, use o backup em Configurações.
 
-## Executar
+## Abrir e publicar
 
-- Portátil: `TreinaPro-v1.9-PORTATIL.html` (abre diretamente no navegador; não precisa de rede).
-- GitHub Pages: publique o conteúdo da pasta na raiz do repositório. Service worker requer HTTPS; a versão portátil é independente.
-- Regenerar portátil: `python make_portable.py`.
-- Backup: em Configurações, exporte/import o JSON ao mudar de aparelho ou origem do site.
+- Portátil: `TreinaPro-v1.9.1-SEM-3D-PORTATIL.html` na pasta acima; abra-o no navegador.
+- GitHub Pages: publique todos os arquivos desta pasta na raiz de `jogoiarexx-blip/Treina-pro` (não é preciso incluir o HTML portátil).
+- Regenerar HTML portátil: `python make_portable.py`.
 
-## Referências
+## Segurança
 
-- [ACE Exercise Library](https://www.acefitness.org/resources/everyone/exercise-library/), referência de instruções de execução (sem copiar imagens ou vídeos).
-- [ACE leg press](https://www.acefitness.org/resources/everyone/exercise-library/154/seated-leg-press/).
-- [MDN — Page Visibility API](https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API).
+As ilustrações são esquemáticas e educativas, não verificam postura e não substituem supervisão de um profissional. Use cargas e amplitudes confortáveis, interrompendo o movimento em caso de dor.
