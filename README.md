@@ -1,12 +1,10 @@
-# TreinaPro v2.0 — REV2: treino mais rápido no celular
+# TreinaPro v2.0 — REV3
 
-- Preservados o cadastro, a chave localStorage, o espelho IndexedDB, o backup, os planos ABC/pernas e os 29 exercícios 2D.
-- Os valores das séries anteriores são mostrados abaixo de cada série.
-- O botão **Usar valores anteriores** copia apenas os campos vazios de séries ainda não concluídas. Não copia o status "feito", não sobrescreve cargas atuais e não aplica aumentos automáticos.
-- O descanso possui pausa, retomada, +15, −15 segundos e pular.
-- O descanso é guardado na sessão, mesmo após fechar e reabrir a explicação do exercício, e não recria os botões a cada segundo.
-- Layout de botões ajustado para celulares pequenos e cache offline atualizado.
+Quatro ilustrações e animações 2D recriadas de forma original: agachamento, leg press, cadeira extensora e supino. Cada exercício recebeu comparativo inicial/final, dois quadros e três variantes animadas/pausada: 24 SVG no total.
 
-O peso anterior é uma referência de registro, não uma recomendação de carga para a sessão atual. Confira os números antes de concluir cada série. Faça backups em Configurações ao mudar de dispositivo.
+Preservados todos os 29 exercícios, os programas ABC e pernas/superiores, histórico de cargas, descanso ajustável e o backup no mesmo armazenamento. O visualizador continua somente **Animado** e **Etapas**, sem 3D.
 
-Publicado sem 3D. Para gerar HTML portátil, execute python make_portable.py.
+O service worker usa cache `treinapro-v2.0-rev3`. O gerador `make_portable.py` incorpora todos os SVG no HTML único. **Não rode os geradores gráficos antigos após esta atualização sem regenerar os recursos específicos**, pois eles podem sobrescrever as melhorias.
+
+Referências consultadas para execução, sem copiar imagens: https://www.acefitness.org/resources/everyone/exercise-library/ e https://www.nasm.org/resource-center/exercise-library/leg-press .
+Desenhos educativos esquemáticos: não corrigem técnica, não substituem profissional de educação física.
