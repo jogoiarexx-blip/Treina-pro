@@ -1,13 +1,12 @@
-# TreinaPro v2.0 — REV1: confiabilidade do histórico
+# TreinaPro v2.0 — REV2: treino mais rápido no celular
 
-Evolução sobre a versão 1.9.1 exclusivamente 2D. Programas ABC, pernas/superiores, 29 exercícios, calendário, personal por voz e perfil preservados.
+- Preservados o cadastro, a chave localStorage, o espelho IndexedDB, o backup, os planos ABC/pernas e os 29 exercícios 2D.
+- Os valores das séries anteriores são mostrados abaixo de cada série.
+- O botão **Usar valores anteriores** copia apenas os campos vazios de séries ainda não concluídas. Não copia o status "feito", não sobrescreve cargas atuais e não aplica aumentos automáticos.
+- O descanso possui pausa, retomada, +15, −15 segundos e pular.
+- O descanso é guardado na sessão, mesmo após fechar e reabrir a explicação do exercício, e não recria os botões a cada segundo.
+- Layout de botões ajustado para celulares pequenos e cache offline atualizado.
 
-- Armazenamento redundante no IndexedDB e na chave histórica localStorage `treinapro-personal-v1`.
-- Migração da cópia antiga; restauração da versão mais recente caso o armazenamento principal esteja vazio ou desatualizado.
-- Datas corrigidas com chave YYYY-MM-DD no horário local do dispositivo.
-- Cronômetro de treino Iniciar/Pausar/Retomar, com pausa ao sair da página. Novas sessões guardam tempo efetivo medido.
-- Os históricos antigos mantêm indicação de tempo estimado; nenhum valor foi convertido artificialmente.
-- Cache offline atualizado para incluir storage.js.
-- Aplicativo portátil: `TreinaPro-v2.0-REV1-PORTATIL.html` (gerado com `python make_portable.py`).
+O peso anterior é uma referência de registro, não uma recomendação de carga para a sessão atual. Confira os números antes de concluir cada série. Faça backups em Configurações ao mudar de dispositivo.
 
-Não apague os dados do site ao atualizar. Mesmo duas cópias locais podem ser perdidas se o navegador limpar seu armazenamento; exporte o backup JSON antes de trocar de aparelho.
+Publicado sem 3D. Para gerar HTML portátil, execute python make_portable.py.

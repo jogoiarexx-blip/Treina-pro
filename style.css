@@ -309,3 +309,20 @@ button.week-day:hover{border-color:var(--lime);background:#203b32}
 .session-clock strong{color:#e1ffb2;font-variant-numeric:tabular-nums;font-size:17px}
 .session-clock button{min-height:42px;min-width:95px}
 @media(max-width:320px){.session-clock{align-items:flex-start;gap:7px}.session-clock button{min-height:44px}}
+
+/* REV2: Séries reutilizáveis e descanso acessível em telas pequenas. */
+.repeat-loads{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 12px}
+.repeat-loads .btn{min-height:44px;font-size:13px}
+.repeat-loads small{color:#b4cbc6;font-size:12px;line-height:1.4}
+.set-row{position:relative}
+.set-row.set-completed{background:rgba(198,246,91,.055)}
+.set-done{min-height:46px;min-width:77px}
+.previous-set{grid-column:1/-1;display:block;color:#a6bfbb;font-size:11px;padding:0 2px 3px}
+.rest-panel{display:grid;gap:11px}
+.rest-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.rest-clock{font-size:27px;letter-spacing:0.4px;font-variant-numeric:tabular-nums}
+.rest-status{color:#c9e1d9;font-weight:700;font-size:12px}
+.rest-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.rest-actions button{min-width:0;min-height:45px;border:1px solid #5e7b72;background:#234044;color:#f2ffe5;border-radius:10px;font-weight:700;font-size:12px;padding:5px 3px;cursor:pointer}
+.rest-actions button:focus-visible,.set-done:focus-visible{outline:3px solid #c6f65b;outline-offset:2px}
+@media(max-width:340px){.rest-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.rest-actions button{min-height:46px}.repeat-loads .btn{width:100%}.previous-set{font-size:11px}}
