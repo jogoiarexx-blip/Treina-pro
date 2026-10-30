@@ -1,16 +1,16 @@
-# TreinaPro v2.1 — REV7: substituição de exercícios
+# TreinaPro v2.1 — REV8: edição individual de treinos
 
-Inspirado na experiência de treino de projetos abertos, com implementação original e sem copiar código ou mídias externas.
+A REV8 permite editar exercícios de cada dia de treinamento, mantendo os planos ABC e pernas/superiores como modelos originais.
 
-- Botão "Aparelho ocupado? Trocar" nos exercícios do treino atual.
-- Sugestões selecionadas do catálogo existente, sem duplicar exercícios do mesmo treino.
-- Número de séries planejadas é preservado conforme o exercício original.
-- Troca disponível apenas antes de registrar peso, repetições ou concluir séries; nenhuma série anterior é excluída.
-- Permite reverter ao exercício original.
-- Histórico mantém os exercícios realizados e um mapa `substitutions` de trocas na sessão finalizada.
-- Persistência das trocas na sessão existente do localStorage `treinapro-personal-v1` e IndexedDB.
-- Treinos ABC, pernas/superiores, 29 exercícios 2D e modo offline mantidos.
+- Adicione exercícios escolhidos entre os 29 movimentos 2D (até 10 por dia).
+- Troque exercícios por opções do mesmo grupo muscular principal.
+- Reordene usando botões para subir/descer e remova exercícios (mínimo de 1 por dia).
+- Restaure os exercícios originais de um dia, sem afetar as outras sessões.
+- Mais alternativas para troca temporária de aparelho ocupado na REV7.
+- Contadores e progresso calculados sobre o treino efetivo, não sobre a lista de fábrica.
+- As edições persistem por programa e por dia em `customWorkouts`, na mesma chave de dados `treinapro-personal-v1`, com cópia em IndexedDB.
+- Editar é bloqueado após qualquer peso, repetição ou série registrada no dia, evitando perda acidental de dados.
+- Histórico de treinos novos passa a salvar `exerciseOrder` com a ordem e o exercício realmente executado.
+- Demonstrativos SVG, offline, perfil, backups e planos originais mantidos.
 
-Alternativas podem ter técnica, padrão de movimento ou carga diferentes. As sugestões não garantem equivalência biomecânica.
-
-Para gerar arquivo único portátil: `python make_portable.py`.
+Não foi incorporado código AGPL nem imagens de terceiros.

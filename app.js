@@ -4,7 +4,7 @@
  const exById = Object.fromEntries(DATA.exercises.map(ex=>[ex.id,ex]));
  const LS = 'treinapro-personal-v1';
  // Manter a mesma chave para preservar o histórico das versões 1.0–1.3.
- const defaults = () => ({ plan:'abc',level:'iniciante',goal:'hipertrofia',photo:'',name:'',next:{abc:0,quad:0},selected:{abc:0,quad:0},sessions:{},history:[],settings:{speech:true}});
+ const defaults = () => ({ plan:'abc',level:'iniciante',goal:'hipertrofia',photo:'',name:'',next:{abc:0,quad:0},selected:{abc:0,quad:0},sessions:{},history:[],customWorkouts:{},settings:{speech:true}});
  let state;
  try {state={...defaults(),...JSON.parse(localStorage.getItem(LS) || '{}')};} catch { state=defaults(); }
  if(!DATA.plans[state.plan]) state.plan='abc';
@@ -13,12 +13,13 @@
  if(typeof state.photo!=='string'||!/^data:image\/(?:jpeg|png|webp);base64,[a-zA-Z0-9+/=]+$/.test(state.photo)||state.photo.length>220000)state.photo='';
  if(!Array.isArray(state.history)) state.history=[];
  if(!state.sessions || typeof state.sessions!=='object') state.sessions={};
+ if(!state.customWorkouts||typeof state.customWorkouts!=='object'||Array.isArray(state.customWorkouts))state.customWorkouts={};
  if(!state.next || typeof state.next!=='object') state.next={abc:0,quad:0};
  if(!state.selected || typeof state.selected!=='object') state.selected={abc:0,quad:0};
  // Perfis existentes com nome preenchido migram sem interromper os treinos.
  // Um perfil sem nome vê as perguntas iniciais, mantendo séries e histórico.
  const needsWelcome = () => !(state.profileComplete === true || (typeof state.name==='string' && state.name.trim().length >= 2));
- let draftWelcomePhoto=state.photo||'', page='inicio', search='', muscle='todos', equipment='todos', activeModal=null, restTimer=null, toastTimer=null, progressExercise='agachamento', swapOrigin=null;
+ let draftWelcomePhoto=state.photo||'', page='inicio', search='', muscle='todos', equipment='todos', activeModal=null, restTimer=null, toastTimer=null, progressExercise='agachamento', swapOrigin=null, planEditorMode='', planEditorTarget=null;
  const $ = id => document.getElementById(id);
  const safe = s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
  const localDateKey=(d)=>{const dt=d instanceof Date?d:new Date(d);return Number.isFinite(dt.getTime())?`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`:'';};
@@ -106,6 +107,7 @@
  const currentDayIndex=()=>Math.max(0,Math.min(plan().days.length-1,Number(state.selected[state.plan])||0));
  const selectedDay=()=>plan().days[currentDayIndex()];
  const sessionKey=(pid,dayid)=>`${pid}:${dayid}`;
+ const workoutBaseIds=(day=selectedDay())=>{const custom=state.customWorkouts?.[state.plan]?.[day.id];return Array.isArray(custom)&&custom.length>0&&custom.length<=10&&new Set(custom).size===custom.length&&custom.every(id=>typeof id==='string'&&Object.hasOwn(exById,id))?custom.slice():day.ex.slice();};
  const sessionFor=(pid=state.plan,dayId=selectedDay().id)=>{const k=sessionKey(pid,dayId); return state.sessions[k] || (state.sessions[k]={});};
 
  // Alternativas editoriais com músculos semelhantes; movimentos não são necessariamente idênticos.
@@ -124,7 +126,7 @@
   const alt=day===selectedDay()?sessionFor()._swaps?.[original]:null;
   return typeof alt==='string'&&SWAP_ALTERNATIVES[original]?.includes(alt)&&exById[alt]?alt:original;
  };
- const exerciseSlots=(day=selectedDay())=>day.ex.map(original=>({original,id:activeExerciseId(original,day)}));
+ const exerciseSlots=(day=selectedDay())=>workoutBaseIds(day).map(original=>({original,id:activeExerciseId(original,day)}));
  const baseSetsFor=(ex)=>state.level==='iniciante'?2:state.goal==='condicionamento'?Math.min(3,ex.sets):state.level==='avancado'&&(ex.muscle==='Quadríceps'||ex.muscle==='Costas'||ex.muscle==='Peito'||ex.muscle==='Glúteos')?4:ex.sets;
  // Preserva o número de séries planejadas para a vaga original.
  const setsFor=(ex)=>{
@@ -133,7 +135,7 @@
  };
  const getSetEntries=(ex)=>{const ses=sessionFor(), entry=ses[ex.id]||{sets:[]};const total=setsFor(ex);return Array.from({length:total},(_,i)=>entry.sets?.[i] || {done:false,kg:'',reps:''});};
  const doneCount=(day=selectedDay())=>exerciseSlots(day).reduce((sum,slot)=>sum+getSetEntries(exById[slot.id]).filter(s=>s.done).length,0);
- const totalCount=(day=selectedDay())=>day.ex.reduce((sum,id)=>sum+setsFor(exById[id]),0);
+ const totalCount=(day=selectedDay())=>exerciseSlots(day).reduce((sum,slot)=>sum+setsFor(exById[slot.id]),0);
  const dateString=(d=new Date())=>d.toLocaleDateString('pt-BR',{day:'numeric',month:'short',year:'numeric'});
  const formatTime=(sec)=>`${Math.floor(sec/60).toString().padStart(2,'0')}:${(sec%60).toString().padStart(2,'0')}`;
  function notify(message){const t=$('toast');t.textContent=message;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),3200);}
@@ -214,9 +216,9 @@
  function heroIllustration(){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 270 225" aria-hidden="true"><circle cx="154" cy="107" r="96" fill="#c6f65b" opacity=".07"/><circle cx="154" cy="107" r="74" fill="none" stroke="#c6f65b" opacity=".25" stroke-width="2"/><g stroke="#d0f68c" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M150 87L136 135L169 165"/><path d="M139 135L107 170L97 204"/><path d="M166 165L192 202"/><path d="M150 99L105 115L89 87"/><path d="M150 100L187 119L212 101"/></g><g fill="#e6ffd1"><circle cx="151" cy="64" r="22"/><circle cx="89" cy="83" r="10"/><circle cx="216" cy="96" r="10"/></g><g stroke="#b9e56e" stroke-width="5"><path d="M62 83h48M195 96h48"/><path d="M61 72v22M243 85v22"/></g><path d="M85 211h129" stroke="#86bd73" opacity=".7" stroke-width="4" stroke-linecap="round"/></svg>`;}
  function renderHome(){const day=selectedDay(),completed=state.history.length,progress=Math.round(doneCount()/totalCount()*100),nextSessions=state.history.filter(l=>l.plan===state.plan).length;
  return `<section class="intro"><div><div class="eyebrow" style="margin-bottom:9px">TRANSFORME SEU MOVIMENTO</div><h1>${state.name?`Olá, ${safe(state.name.split(/\s+/)[0])}!`:"Seu ritmo."}<br><span class="headline-name">Sua evolução.</span></h1><p>Seu personal digital com orientação em cada repetição.</p></div><div class="intro-person">${avatarMarkup("lg")}<div>${pill(plan().audience)}<span class="intro-goal">${safe(goalInfo().icon+" "+goalInfo().name)} · ${safe(state.level)}</span></div></div></section>
- <section class="hero"><div class="hero-body"><div class="eyebrow">✦ SEU PRÓXIMO TREINO</div><h2>${safe(day.title)}</h2><p>${safe(day.focus)}. Acompanhe a execução ilustrada, registre sua carga e evolua no seu ritmo.</p><div class="hero-meta"><span>◷ ${day.min} min estimados</span><span>▤ ${day.ex.length} exercícios</span><span>◉ ${totalCount()} séries</span></div><button class="btn btn-primary" data-action="start-workout">${doneCount()>0?'▶ Continuar treino':'▶ Começar treino'} <span>↗</span></button><span style="margin-left:10px" class="pill-outline">Treino ${day.letter}</span></div><div class="hero-visual">${heroIllustration()}</div></section>
+ <section class="hero"><div class="hero-body"><div class="eyebrow">✦ SEU PRÓXIMO TREINO</div><h2>${safe(day.title)}</h2><p>${safe(day.focus)}. Acompanhe a execução ilustrada, registre sua carga e evolua no seu ritmo.</p><div class="hero-meta"><span>◷ ${day.min} min estimados</span><span>▤ ${workoutBaseIds(day).length} exercícios</span><span>◉ ${totalCount()} séries</span></div><button class="btn btn-primary" data-action="start-workout">${doneCount()>0?'▶ Continuar treino':'▶ Começar treino'} <span>↗</span></button><span style="margin-left:10px" class="pill-outline">Treino ${day.letter}</span></div><div class="hero-visual">${heroIllustration()}</div></section>
  <div class="dashboard-grid"><div><div class="section-head"><div><h2>Sua divisão de treino</h2><p>Selecione o dia que deseja trabalhar</p></div><button class="text-button" data-page="treinos">Ver plano ↗</button></div>${renderDayCards()}
- <div class="section-head"><div><h2>Exercícios do treino ${day.letter}</h2><p>${safe(day.title)} • toque para aprender</p></div><span class="small muted">${doneCount()}/${totalCount()} séries</span></div>
+ <div class="section-head routine-heading"><div><h2>Exercícios do treino ${day.letter}</h2><p>${safe(day.title)} • toque para aprender</p></div><button class="btn btn-dark btn-sm" data-action="edit-workout">⚙ Editar treino</button><span class="small muted">${doneCount()}/${totalCount()} séries</span></div>
  <div class="stack">${exerciseSlots(day).map((slot,i)=>renderExerciseCard(exById[slot.id],i,slot.original)).join('')}</div></div>
  <aside class="stack right-col"><div class="stat-grid"><div class="stat-card"><span class="stat-label">TREINOS CONCLUÍDOS</span><strong>${completed}</strong><span class="stat-foot">✓ Sua constância</span></div><div class="stat-card"><span class="stat-label">SÉRIES DE HOJE</span><strong>${doneCount()}<small> / ${totalCount()}</small></strong><span class="stat-foot">↗ ${progress}% do treino</span></div></div>
  ${profilePanel()}<div class="coach-card"><div class="coach-heading"><span class="coach-icon">✦</span><div><h3>Seu coach orienta</h3><p class="muted small" style="margin:3px 0 0">Dica para este treino</p></div></div><p>Comece com <b>5–10 minutos</b> de aquecimento leve. ${safe(goalInfo().tip)} Antes de uma série pesada, faça uma ou duas séries leves de preparação.</p><ul><li>Execução controlada acima da carga</li><li>Descanse conforme o exercício</li><li>Interrompa se sentir dor aguda</li></ul>${state.goal!=="hipertrofia"?`<p class="small muted cardio-hint">★ Nos dias livres, considere caminhadas ou outra atividade aeróbica confortável, evoluindo aos poucos. Musculação isolada não garante emagrecimento.</p>`:""}</div>
@@ -244,7 +246,7 @@
   return `<div class="page-heading"><span class="eyebrow">PROGRAMAÇÃO SEMANAL</span><h1>Meus <span class="headline-name">treinos</span></h1><p>Seu plano atual: ${safe(plan().label)}.</p></div>
   ${renderWeeklySchedule()}
   <div class="section-head"><h2>Treinos do seu plano</h2></div>
-  <div class="plan-list">${plan().days.map((d,i)=>`<div class="plan-row ${i===currentDayIndex()?'active':''}"><div class="day-letter">${d.letter}</div><div class="plan-row-text"><h3>${safe(d.title)}</h3><p>${safe(d.focus)} · ${d.ex.length} exercícios · ${d.min} min estimados</p></div><button class="btn ${i===currentDayIndex()?'btn-primary':'btn-dark'} btn-sm" data-action="day" data-index="${i}" data-navigate="inicio">${i===currentDayIndex()?'Continuar':'Abrir'} ↗</button></div>`).join('')}</div>
+  <div class="plan-list">${plan().days.map((d,i)=>`<div class="plan-row ${i===currentDayIndex()?'active':''}"><div class="day-letter">${d.letter}</div><div class="plan-row-text"><h3>${safe(d.title)}</h3><p>${safe(d.focus)} · ${workoutBaseIds(d).length} exercícios · ${d.min} min estimados</p></div><button class="btn btn-dark btn-sm" data-action="edit-workout" data-index="${i}" aria-label="Editar treino ${safe(d.letter)}">Editar</button><button class="btn ${i===currentDayIndex()?'btn-primary':'btn-dark'} btn-sm" data-action="day" data-index="${i}" data-navigate="inicio">${i===currentDayIndex()?'Continuar':'Abrir'} ↗</button></div>`).join('')}</div>
   <details class="plan-switcher"><summary>Trocar tipo de treino</summary><p>Você pode escolher qualquer programa, independentemente do sexo. Seus registros continuam salvos.</p><div class="plan-controls"><button class="seg-button ${state.plan==='abc'?'active':''}" data-action="plan" data-plan="abc">Treino ABC • 3 dias</button><button class="seg-button ${state.plan==='quad'?'active':''}" data-action="plan" data-plan="quad">Pernas / superiores • 4 dias</button></div></details>
   ${safetyNote()}`;
  }
@@ -415,10 +417,11 @@
  function hasSetData(id){const entry=sessionFor()[id];return Array.isArray(entry?.sets)&&entry.sets.some(x=>x&&(x.done||String(x.kg??'').trim()||String(x.reps??'').trim()));}
  function availableSwaps(original){
   const occupied=new Set(exerciseSlots().filter(slot=>slot.original!==original).map(slot=>slot.id));
-  return (SWAP_ALTERNATIVES[original]||[]).filter(id=>exById[id]&&!occupied.has(id)&&!hasSetData(id));
+  const sameMuscle=DATA.exercises.filter(ex=>ex.id!==original&&ex.muscle===exById[original]?.muscle).map(ex=>ex.id);
+  return [...new Set([...(SWAP_ALTERNATIVES[original]||[]),...sameMuscle])].filter(id=>id!==activeExerciseId(original)&&exById[id]&&!occupied.has(id)&&!hasSetData(id));
  }
  function openSwapPicker(original){
-  if(!selectedDay().ex.includes(original))return;
+  if(!workoutBaseIds().includes(original))return;
   const active=activeExerciseId(original);
   if(hasSetData(active)){notify('Já existem séries nesse exercício. Para não perder os dados, a troca só é possível antes da primeira série.');return;}
   closeModal();swapOrigin=original;
@@ -428,7 +431,7 @@
   document.body.style.overflow='hidden';$('modalRoot').querySelector('.close-btn')?.focus();
  }
  function chooseSwap(original,id){
-  if(swapOrigin!==original||!selectedDay().ex.includes(original))return;
+  if(swapOrigin!==original||!workoutBaseIds().includes(original))return;
   const current=activeExerciseId(original),reset=id===original;
   if(hasSetData(current)||(!reset&&!availableSwaps(original).includes(id))){notify('Troca indisponível: já existem séries registradas ou o exercício está no treino.');return;}
   const ses=sessionFor();if(!ses._swaps||typeof ses._swaps!=='object')ses._swaps={};
@@ -437,6 +440,60 @@
   save();closeModal();render();
   notify(reset?'Exercício original restaurado.':'Exercício trocado. Confira a técnica e ajuste a carga com segurança.');
  }
+ function workoutHasData(){
+ const ses=sessionFor();
+ return Object.keys(ses).some(id=>Object.hasOwn(exById,id)&&hasSetData(id));
+}
+function editAllowed(){
+ if(workoutHasData()){notify('Este treino já tem séries preenchidas. Finalize-o antes de editar os exercícios, para preservar seus registros.');return false;}
+ return true;
+}
+function editorOptions(mode,target){
+ const used=new Set(workoutBaseIds()),ref=exById[target],curated=SWAP_ALTERNATIVES[target]||[];
+ const allowed=DATA.exercises.filter(ex=>!used.has(ex.id)&&(mode==='add'||ex.muscle===ref?.muscle));
+ return allowed.sort((a,b)=>{
+  const pa=mode==='replace'&&curated.includes(a.id)?0:1,pb=mode==='replace'&&curated.includes(b.id)?0:1;
+  return pa-pb||a.muscle.localeCompare(b.muscle,'pt-BR')||a.name.localeCompare(b.name,'pt-BR');
+ });
+}
+function renderPlanEditor(){
+ const ids=workoutBaseIds(),isDefault=ids.join(',')===selectedDay().ex.join(',');
+ const locked=workoutHasData();
+ const rows=ids.map((id,i)=>{const ex=exById[id];return `<div class="routine-item"><span class="routine-index">${i+1}</span><img loading="lazy" src="${imageFor(id)}" alt=""><div class="routine-info"><strong>${safe(ex.name)}</strong><small>${safe(ex.muscle)} · ${safe(ex.equip)} · ${baseSetsFor(ex)} séries</small></div><div class="routine-buttons"><button type="button" data-action="edit-move" data-id="${safe(id)}" data-dir="-1" ${locked||i===0?'disabled':''} aria-label="Mover ${safe(ex.name)} para cima">↑</button><button type="button" data-action="edit-move" data-id="${safe(id)}" data-dir="1" ${locked||i===ids.length-1?'disabled':''} aria-label="Mover ${safe(ex.name)} para baixo">↓</button><button type="button" data-action="edit-pick" data-id="${safe(id)}" ${locked?'disabled':''}>Trocar</button><button type="button" data-action="edit-remove" data-id="${safe(id)}" ${locked||ids.length===1?'disabled':''}>Remover</button></div></div>`;}).join('');
+ const picking=planEditorMode==='replace'||planEditorMode==='add';
+ const choices=picking?editorOptions(planEditorMode,planEditorTarget):[];
+ const selection=picking?`<div class="routine-picker"><div class="card-row"><h3>${planEditorMode==='replace'?'Escolher substituto do mesmo grupo muscular':'Adicionar exercício da biblioteca'}</h3><button type="button" class="btn btn-dark btn-sm" data-action="edit-cancel">Voltar</button></div><p class="muted small">${planEditorMode==='replace'?'Exercícios com o mesmo grupo muscular principal. Confira diferenças de equipamento e execução.':'Escolha qualquer exercício ainda não utilizado neste treino.'}</p><div class="routine-options">${choices.map(ex=>`<button type="button" class="routine-choice" data-action="edit-select" data-id="${safe(ex.id)}"><img loading="lazy" src="${imageFor(ex.id)}" alt=""><span><strong>${safe(ex.name)}</strong><small>${safe(ex.muscle)} · ${safe(ex.equip)}</small></span></button>`).join('')||'<p class="muted">Não existem alternativas disponíveis nesta categoria.</p>'}</div></div>`:'';
+ $('modalRoot').innerHTML=`<div class="modal-overlay" id="modalOverlay"><section class="modal routine-editor" role="dialog" aria-modal="true" aria-labelledby="routineTitle"><div class="modal-header"><div><span class="eyebrow">PLANO PERSONALIZÁVEL • SEM 3D</span><h2 id="routineTitle">Editar treino ${safe(selectedDay().letter)}</h2><p>${safe(selectedDay().title)} · ${ids.length} exercícios</p></div><button class="close-btn" data-action="close" aria-label="Fechar">×</button></div><div class="routine-body"><p class="muted small">Mude a ordem com as setas, troque, remova ou adicione exercícios. Seu plano ABC ou pernas/superiores continua como modelo inicial. O histórico anterior não é alterado.</p>${locked?'<p class="routine-warning">Existem séries preenchidas neste treino. A edição fica bloqueada até concluir a sessão.</p>':''}<div class="routine-list">${rows}</div><div class="routine-actions"><button class="btn btn-primary btn-sm" data-action="edit-add" ${locked||ids.length>=10?'disabled':''}>+ Adicionar exercício</button><button class="btn btn-dark btn-sm" data-action="edit-reset" ${locked||isDefault?'disabled':''}>↶ Restaurar treino original</button></div>${selection}<p class="muted small">Máximo de 10 exercícios e mínimo de 1 por dia. Pesos digitados ou séries concluídas bloqueiam a edição deste treino até ele ser finalizado.</p></div></section></div>`;
+ document.body.style.overflow='hidden';
+}
+function openPlanEditor(index){
+ if(index!==undefined){const n=Number(index);if(!Number.isInteger(n)||n<0||n>=plan().days.length)return;if(n!==currentDayIndex()){state.selected[state.plan]=n;save();render();}}
+ closeModal();planEditorMode='';planEditorTarget=null;renderPlanEditor();
+}
+function editRoutine(action,id,delta){
+ if(action==='cancel'){planEditorMode='';planEditorTarget=null;renderPlanEditor();return;}
+ if(!editAllowed())return;
+ const ids=workoutBaseIds();
+ if(action==='pick'){if(!ids.includes(id))return;planEditorMode='replace';planEditorTarget=id;renderPlanEditor();return;}
+ if(action==='add'){if(ids.length>=10){notify('O treino pode ter no máximo 10 exercícios.');return;}planEditorMode='add';planEditorTarget=null;renderPlanEditor();return;}
+ if(action==='reset'){if(!confirm('Restaurar os exercícios originais deste dia? O histórico anterior será preservado.'))return;
+  if(state.customWorkouts?.[state.plan])delete state.customWorkouts[state.plan][selectedDay().id];
+ }else if(action==='move'){const i=ids.indexOf(id),j=i+Number(delta);if(i<0||j<0||j>=ids.length||!Number.isInteger(j))return;[ids[i],ids[j]]=[ids[j],ids[i]];}
+ else if(action==='remove'){if(ids.length<=1)return;const i=ids.indexOf(id);if(i<0)return;ids.splice(i,1);}
+ else if(action==='select'){
+  if(!editorOptions(planEditorMode,planEditorTarget).some(ex=>ex.id===id))return;
+  if(planEditorMode==='replace'){const i=ids.indexOf(planEditorTarget);if(i<0)return;ids[i]=id;}
+  else if(planEditorMode==='add'&&ids.length<10)ids.push(id);else return;
+ }else return;
+ if(action!=='reset'){
+  if(!state.customWorkouts||typeof state.customWorkouts!=='object'||Array.isArray(state.customWorkouts))state.customWorkouts={};
+  if(!state.customWorkouts[state.plan]||typeof state.customWorkouts[state.plan]!=='object')state.customWorkouts[state.plan]={};
+  state.customWorkouts[state.plan][selectedDay().id]=ids;
+ }
+ const ses=sessionFor();delete ses._swaps;delete ses._rest;
+ planEditorMode='';planEditorTarget=null;save();render();renderPlanEditor();
+ notify(action==='reset'?'Treino original restaurado.':'Plano do treino atualizado.');
+}
  function previousExerciseSets(id){
    for(let i=state.history.length-1;i>=0;i--){
      const entries=state.history[i]?.details?.[id]?.sets;
@@ -470,7 +527,7 @@
    }).join('');
  }
 
- function closeModal(){const hadTracker=!!activeModal?.track;activeModal=null;swapOrigin=null;clearInterval(restTimer);$('modalRoot').innerHTML='';document.body.style.overflow='';try{speechSynthesis.cancel()}catch{}window.TreinaProCoach?.stop();if(hadTracker&&page==='inicio')render();}
+ function closeModal(){const hadTracker=!!activeModal?.track;activeModal=null;swapOrigin=null;planEditorMode='';planEditorTarget=null;clearInterval(restTimer);$('modalRoot').innerHTML='';document.body.style.overflow='';try{speechSynthesis.cancel()}catch{}window.TreinaProCoach?.stop();if(hadTracker&&page==='inicio')render();}
  function syncSetField(target){if(!activeModal?.track)return;const ex=exById[activeModal.id],n=Number(target.dataset.set),field=target.dataset.field;if(!ex||!['kg','reps'].includes(field)||!Number.isInteger(n)||n<0||n>=setsFor(ex))return;const ses=sessionFor(),entry=ses[ex.id]||(ses[ex.id]={sets:[]});entry.sets[n]=entry.sets[n]||{done:false,kg:'',reps:''};entry.sets[n][field]=String(target.value).slice(0,12);save();}
  function toggleSet(n){if(!activeModal?.track)return;startSessionTimer();const ex=exById[activeModal.id],all=getSetEntries(ex);if(!Number.isInteger(n)||n<0||n>=all.length)return;const ses=sessionFor(),entry=ses[ex.id]||(ses[ex.id]={sets:[]});entry.sets=all;entry.sets[n].done=!entry.sets[n].done;const marked=entry.sets[n].done;save();$('setList').innerHTML=renderSetList(ex);if(marked){if(entry.sets.some(s=>!s.done))startRest(restFor(ex));else clearRest('✓ Exercício concluído!');notify('Série concluída! Bom trabalho.');}else{notify('Série desmarcada.');}}
  // Descanso é salvo na sessão atual, inclusive ao fechar a explicação ou atualizar a página.
@@ -537,14 +594,14 @@
  window.addEventListener('pagehide',()=>pauseSessionTimer(true));
  setInterval(refreshWorkoutClock,1000);
  function startWorkout(){startSessionTimer();const slots=exerciseSlots(),id=slots.find(x=>getSetEntries(exById[x.id]).some(s=>!s.done))?.id||slots[0]?.id;if(id)openModal(id,true);}
- function finishWorkout(){const day=selectedDay(),n=doneCount(),total=totalCount();if(n===0){notify('Registre ao menos uma série para finalizar.');return;}if(n<total&&!confirm(`Você registrou ${n} de ${total} séries. Deseja finalizar mesmo assim?`))return;const ses=sessionFor(),timer=ses._timer;const seconds=Math.max(0,Math.floor(elapsedWorkoutMs(timer)/1000));const details=JSON.parse(JSON.stringify(ses));delete details._timer;delete details._rest;delete details._swaps;const substitutions={...ses._swaps};const record={date:new Date().toISOString(),startedAt:timer?.startedAt||null,plan:state.plan,day:day.id,title:day.title,program:plan().label,doneSets:n,plannedSets:total,minutes:Math.ceil(seconds/60),durationSeconds:seconds,durationMode:timer?'measured':'unavailable',substitutions,details};state.history.push(record);delete state.sessions[sessionKey(state.plan,day.id)];state.next[state.plan]=(currentDayIndex()+1)%plan().days.length;state.selected[state.plan]=state.next[state.plan];save();notify(`Treino ${day.letter} salvo! Parabéns!`);render();}
+ function finishWorkout(){const day=selectedDay(),n=doneCount(),total=totalCount();if(n===0){notify('Registre ao menos uma série para finalizar.');return;}if(n<total&&!confirm(`Você registrou ${n} de ${total} séries. Deseja finalizar mesmo assim?`))return;const ses=sessionFor(),timer=ses._timer;const seconds=Math.max(0,Math.floor(elapsedWorkoutMs(timer)/1000));const details=JSON.parse(JSON.stringify(ses));delete details._timer;delete details._rest;delete details._swaps;const substitutions={...ses._swaps};const record={date:new Date().toISOString(),startedAt:timer?.startedAt||null,plan:state.plan,day:day.id,title:day.title,program:plan().label,doneSets:n,plannedSets:total,minutes:Math.ceil(seconds/60),durationSeconds:seconds,durationMode:timer?'measured':'unavailable',substitutions,exerciseOrder:exerciseSlots().map(slot=>({original:slot.original,performed:slot.id,sets:setsFor(exById[slot.id])})),details};state.history.push(record);delete state.sessions[sessionKey(state.plan,day.id)];state.next[state.plan]=(currentDayIndex()+1)%plan().days.length;state.selected[state.plan]=state.next[state.plan];save();notify(`Treino ${day.letter} salvo! Parabéns!`);render();}
  function setPlan(p){if(!DATA.plans[p])return;const draft=$('displayName')?.value;state.plan=p;state.selected[p]=Number(state.selected[p])||0;save();render();if(draft!==undefined&&$('displayName'))$('displayName').value=draft;notify(`Plano ${DATA.plans[p].label} selecionado.`);}
  function setGoal(goal){if(!GOALS[goal])return;const draft=$('displayName')?.value;state.goal=goal;save();render();if(draft!==undefined&&$('displayName'))$('displayName').value=draft;notify(`Objetivo atualizado: ${GOALS[goal].name}.`);}
  function setLevel(l){if(!['iniciante','intermediario','avancado'].includes(l))return;const draft=$('displayName')?.value;state.level=l;save();render();if(draft!==undefined&&$('displayName'))$('displayName').value=draft;}
  function exportData(){const data=JSON.stringify({app:'TreinaPro',version:2,exportedAt:new Date().toISOString(),state},null,2);const blob=new Blob([data],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='treinapro-backup.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);notify('Backup exportado.');}
  function importData(file){if(!file)return;if(file.size>3*1024*1024){notify('Arquivo muito grande.');return;}const reader=new FileReader();reader.onload=()=>{try{const raw=JSON.parse(String(reader.result));if(raw.app!=='TreinaPro'||!raw.state||!Array.isArray(raw.state.history)||!DATA.plans[raw.state.plan])throw Error('formato');if(!confirm('Substituir os dados atuais pelo backup selecionado?'))return;const s=raw.state;state={...defaults(),...s,history:s.history.slice(-3000),sessions:s.sessions&&typeof s.sessions==='object'?s.sessions:{}};if(!GOALS[state.goal])state.goal='hipertrofia';if(typeof state.photo!=='string'||!/^data:image\/(?:jpeg|png|webp);base64,[a-zA-Z0-9+/=]+$/.test(state.photo)||state.photo.length>220000)state.photo='';save();render();if(!(state.profileComplete===true||String(state.name||'').trim().length>=2))renderWelcome();notify('Backup restaurado.');}catch{notify('Arquivo de backup inválido.');}};reader.readAsText(file);}
  function speak(){if(!activeModal)return;const ex=exById[activeModal.id];if(!('speechSynthesis'in window)){notify('Narração indisponível neste navegador.');return;}try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`${ex.name}. ${ex.steps.map((s,i)=>`Passo ${i+1}: ${s}`).join(' ')} Dica: ${ex.tip}. Atenção: ${ex.mistake}. Respiração: ${ex.breath}`);u.lang='pt-BR';u.rate=.94;speechSynthesis.speak(u);notify('O personal está explicando o exercício.');}catch{notify('Narração indisponível.');}}
- document.addEventListener('click',e=>{if(e.target.id==='modalOverlay'){closeModal();return;}const control=e.target.closest('[data-action],[data-page]');if(!control)return;if(control.dataset.action){switch(control.dataset.action){case'day':{const i=Number(control.dataset.index);if(Number.isInteger(i)&&i>=0&&i<plan().days.length){state.selected[state.plan]=i;save();if(control.dataset.navigate)setPage('inicio');else render();}break;}case'plan':setPlan(control.dataset.plan);break;case'level':setLevel(control.dataset.level);break;case'remove-photo':{const draft=$('displayName')?.value;state.photo='';save();render();if(draft!==undefined&&$('displayName'))$('displayName').value=draft;notify('Foto removida.');break;}case'exercise':openModal(control.dataset.id,control.dataset.track==='1');break;case'swap-open':openSwapPicker(control.dataset.origin);break;case'swap-choose':chooseSwap(control.dataset.origin,control.dataset.id);break;case'close':closeModal();break;case'go-workout':closeModal();setPage('inicio');break;case'start-workout':startWorkout();break;case'finish-workout':finishWorkout();break;case'toggle-session-timer':{const timer=sessionTimer();if(!timer){startSessionTimer();}else if(timer.paused)resumeSessionTimer();else pauseSessionTimer();render();break;}case'toggle-set':toggleSet(Number(control.dataset.index));break;case'copy-last':copyPreviousSets();break;case'rest-manual':if(activeModal)startRest(restFor(exById[activeModal.id]));break;case'skip-rest':if(activeRest())clearRest();break;case'rest-pause':pauseOrResumeRest();break;case'rest-plus':changeRest(15);break;case'rest-minus':changeRest(-15);break;case'speak':speak();break;case'demo-mode':changeDemo(control.dataset.mode);break;case'guide-next':guideMove(1);break;case'guide-prev':guideMove(-1);break;case'guide-speak':guideSpeak();break;case'viewer-mode':changeViewer(control.dataset.viewer);break;case'save-settings':{const n=($('displayName')?.value||'').trim().replace(/\s+/g,' ');if(n.length<2){notify('Informe um nome com pelo menos 2 caracteres.');$('displayName')?.focus();break;}state.name=n.slice(0,35);state.profileComplete=true;save();setPage('inicio');notify('Nome e preferências salvos!');break;}case'export':exportData();break;case'reset':if(confirm('Apagar todo o histórico e séries atuais deste navegador?')){state.history=[];state.sessions={};state.next={abc:0,quad:0};state.selected={abc:0,quad:0};save();render();notify('Histórico limpo.');}break;}return;}if(control.dataset.page){e.preventDefault();setPage(control.dataset.page);}});
+ document.addEventListener('click',e=>{if(e.target.id==='modalOverlay'){closeModal();return;}const control=e.target.closest('[data-action],[data-page]');if(!control)return;if(control.dataset.action){switch(control.dataset.action){case'day':{const i=Number(control.dataset.index);if(Number.isInteger(i)&&i>=0&&i<plan().days.length){state.selected[state.plan]=i;save();if(control.dataset.navigate)setPage('inicio');else render();}break;}case'plan':setPlan(control.dataset.plan);break;case'level':setLevel(control.dataset.level);break;case'remove-photo':{const draft=$('displayName')?.value;state.photo='';save();render();if(draft!==undefined&&$('displayName'))$('displayName').value=draft;notify('Foto removida.');break;}case'exercise':openModal(control.dataset.id,control.dataset.track==='1');break;case'edit-workout':openPlanEditor(control.dataset.index);break;case'edit-move':editRoutine('move',control.dataset.id,control.dataset.dir);break;case'edit-remove':editRoutine('remove',control.dataset.id);break;case'edit-pick':editRoutine('pick',control.dataset.id);break;case'edit-add':editRoutine('add');break;case'edit-reset':editRoutine('reset');break;case'edit-cancel':editRoutine('cancel');break;case'edit-select':editRoutine('select',control.dataset.id);break;case'swap-open':openSwapPicker(control.dataset.origin);break;case'swap-choose':chooseSwap(control.dataset.origin,control.dataset.id);break;case'close':closeModal();break;case'go-workout':closeModal();setPage('inicio');break;case'start-workout':startWorkout();break;case'finish-workout':finishWorkout();break;case'toggle-session-timer':{const timer=sessionTimer();if(!timer){startSessionTimer();}else if(timer.paused)resumeSessionTimer();else pauseSessionTimer();render();break;}case'toggle-set':toggleSet(Number(control.dataset.index));break;case'copy-last':copyPreviousSets();break;case'rest-manual':if(activeModal)startRest(restFor(exById[activeModal.id]));break;case'skip-rest':if(activeRest())clearRest();break;case'rest-pause':pauseOrResumeRest();break;case'rest-plus':changeRest(15);break;case'rest-minus':changeRest(-15);break;case'speak':speak();break;case'demo-mode':changeDemo(control.dataset.mode);break;case'guide-next':guideMove(1);break;case'guide-prev':guideMove(-1);break;case'guide-speak':guideSpeak();break;case'viewer-mode':changeViewer(control.dataset.viewer);break;case'save-settings':{const n=($('displayName')?.value||'').trim().replace(/\s+/g,' ');if(n.length<2){notify('Informe um nome com pelo menos 2 caracteres.');$('displayName')?.focus();break;}state.name=n.slice(0,35);state.profileComplete=true;save();setPage('inicio');notify('Nome e preferências salvos!');break;}case'export':exportData();break;case'reset':if(confirm('Apagar todo o histórico e séries atuais deste navegador?')){state.history=[];state.sessions={};state.next={abc:0,quad:0};state.selected={abc:0,quad:0};save();render();notify('Histórico limpo.');}break;}return;}if(control.dataset.page){e.preventDefault();setPage(control.dataset.page);}});
  document.addEventListener('submit',e=>{if(e.target.id==='welcomeForm')welcomeSubmit(e);});
  document.addEventListener('input',e=>{if(e.target.id==='welcomeName')e.target.setCustomValidity('');if(e.target.matches('#searchExercises')){search=e.target.value;refreshLibraryResults();}if(e.target.matches('[data-set][data-field]'))syncSetField(e.target);});
  document.addEventListener('change',e=>{if(e.target.matches('#muscleFilter')){muscle=e.target.value;refreshLibraryResults();}if(e.target.matches('#equipmentFilter')){equipment=e.target.value;refreshLibraryResults();}if(e.target.matches('#importFile'))importData(e.target.files?.[0]);if(e.target.id==='welcomePhotoFile')handleProfilePhoto(e.target.files?.[0],'welcome');if(e.target.id==='profilePhotoFile')handleProfilePhoto(e.target.files?.[0],'settings');if(e.target.matches('input[name="settingsGoal"]'))setGoal(e.target.value);if(e.target.matches('#progressExerciseSelect')){progressExercise=e.target.value;const target=document.querySelector('.strength-panel');if(target)target.outerHTML=renderStrengthPanel();}});
