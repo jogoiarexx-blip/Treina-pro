@@ -454,3 +454,8 @@ button.week-day:hover{border-color:var(--lime);background:#203b32}
 @media(max-width:800px){.featured-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.featured-heading h2{font-size:21px}}
 @media(max-width:380px){.featured-showcase{padding:12px}.featured-grid{gap:8px}.featured-card>span{font-size:11px}.featured-card>small{font-size:10px}.featured-card>span,.featured-card>small{padding:0 8px}}
 .hero-visual img.hero-webp{max-height:230px;object-fit:cover}
+
+/* TreinaPro marca v3: simbolo adaptativo no cabecalho de celular */
+.topbar-brand{display:none;object-fit:contain;flex-shrink:0;border-radius:8px}
+@media(max-width:900px){.topbar-brand{display:block}.breadcrumbs{display:flex;align-items:center;gap:9px;min-width:0}.breadcrumbs .dot-live{display:none}.breadcrumbs #breadcrumb{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+.brand-webp{object-fit:contain}
