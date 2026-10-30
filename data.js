@@ -32,12 +32,12 @@ window.TREINO_DATA = {
   {id:'coice_polia',name:'Coice de glúteos na polia',muscle:'Glúteos',equip:'Polia baixa',type:'hip',sets:3,reps:'12–15 / lado',rest:60,difficulty:'Intermediário',steps:['Prenda a tornozeleira na polia baixa e segure num apoio.','Empurre a perna para trás movendo o quadril sem arquear a lombar.','Retorne lentamente e troque de lado.'],tip:'Use amplitude que mantenha a pelve estável.',mistake:'Evite projetar o tronco para trás.',breath:'Expire na extensão.'}
  ],
  plans: {
-  abc: {label:'ABC • equilíbrio muscular',description:'Três treinos em sequência: empurrar, puxar e pernas.',audience:'Masculino • ABC',days:[
+  abc: {label:'ABC • equilíbrio muscular',description:'Três treinos em sequência: empurrar, puxar e pernas.',audience:'ABC • 3 treinos',days:[
    {id:'a',letter:'A',title:'Peito, ombros e tríceps',short:'Empurrar',focus:'Membros superiores',min:55,ex:['supino','supino_inclinado','crucifixo','elevacao_lateral','triceps_polia','triceps_frances']},
    {id:'b',letter:'B',title:'Costas e bíceps',short:'Puxar',focus:'Membros superiores',min:55,ex:['puxada_alta','remada_baixa','remada_unilateral','face_pull','rosca_direta','rosca_martelo']},
    {id:'c',letter:'C',title:'Pernas e abdômen',short:'Inferiores',focus:'Pernas completas',min:60,ex:['agachamento','leg_press','romeno','flexora','panturrilha','prancha']}
   ]},
-  quad: {label:'Inferiores + superiores • 4 dias',description:'Pernas, braços, pernas e braços, com ênfase em quadríceps.',audience:'Feminino • foco em quadríceps',days:[
+  quad: {label:'Inferiores + superiores • 4 dias',description:'Pernas, braços, pernas e braços, com ênfase em quadríceps.',audience:'Pernas e superiores • foco em quadríceps',days:[
    {id:'a',letter:'A',title:'Quadríceps e glúteos',short:'Pernas I',focus:'Ênfase em quadríceps',min:55,ex:['agachamento','leg_press','extensora','afundo','panturrilha']},
    {id:'b',letter:'B',title:'Superiores completos',short:'Braços I',focus:'Costas, peito e braços',min:50,ex:['puxada_alta','supino_maquina','remada_baixa','desenvolvimento','triceps_polia','rosca_direta']},
    {id:'c',letter:'C',title:'Posterior e glúteos',short:'Pernas II',focus:'Glúteos e posterior',min:55,ex:['hip_thrust','romeno','flexora','abdutora','bulgaro','panturrilha']},
