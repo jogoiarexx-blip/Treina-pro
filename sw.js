@@ -1,5 +1,5 @@
-/* TreinaPro REV4: cache resiliente, sem travar o primeiro uso para baixar todas as ilustrações. */
-const VERSION='treinapro-v2.5-rev13';
+/* TreinaPro REV14: cache resiliente, sem travar o primeiro uso para baixar todas as ilustrações. */
+const VERSION='treinapro-v2.6-rev14';
 const SHELL=[ './', './index.html','./style.css','./pwa.css','./data.js','./storage.js','./app.js','./coach.js','./pwa.js','./manifest.webmanifest','./assets/icon-192.png','./assets/icon-512.png','./assets/favicon.svg'];
 const IDS=['supino','supino_inclinado','crucifixo','elevacao_lateral','triceps_polia','triceps_frances','puxada_alta','remada_baixa','remada_unilateral','face_pull','rosca_direta','rosca_martelo','agachamento','leg_press','extensora','afundo','romeno','flexora','panturrilha','prancha','hip_thrust','abdutora','bulgaro','desenvolvimento','supino_maquina','agachamento_goblet','step_up','abdominal','coice_polia'];
 const THUMBNAILS=IDS.map(id=>`./assets/webp/exercises/${id}.webp`);
@@ -30,8 +30,12 @@ self.addEventListener('activate',event=>{event.waitUntil((async()=>{
  if(keys.length){
    // Preservar todas as demonstrações que o usuário baixou nas versões anteriores.
    const current=await caches.open(VERSION),older=await Promise.all(keys.map(k=>caches.open(k)));
+   // Os 15 exercícios abaixo receberam arte nova. Nunca migre o arquivo visual antigo.
+   const changed=new Set(["supino_inclinado","elevacao_lateral","triceps_polia","triceps_frances","puxada_alta","rosca_direta","rosca_martelo","afundo","romeno","panturrilha","prancha","hip_thrust","abdutora","agachamento_goblet","abdominal"]);
    const paths=[...THUMBNAILS,...FULL_DEMOS,...UI_WEBP,...FEATURED_WEBP];let index=0;
    async function migrate(){while(index<paths.length){const path=paths[index++],url=normalized(path);
+      const assetId=path.split('/').pop().split('.')[0];
+      if(changed.has(assetId))continue;
       try{if(await current.match(url))continue;
         for(const cache of older){const old=await cache.match(url);if(old&&isSuccess(old)){await current.put(url,old.clone());break;}}
       }catch{/* Falha em imagem opcional não impede ativação. */}

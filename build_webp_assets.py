@@ -108,7 +108,7 @@ def build():
         im=Image.open(io.BytesIO(png))
         assets.append(save(im,ROOT/'assets'/'featured'/(f.stem+'.webp'),86))
     if len(assets)!=125:raise RuntimeError('Wrong number of assets')
-    summary={'version':'treinapro-v2.5-rev13','assets':assets,'total_bytes':sum(e['bytes'] for e in assets),
+    summary={'version':'treinapro-v2.6-rev14','assets':assets,'total_bytes':sum(e['bytes'] for e in assets),
              'by_folder':dict(Counter(str(Path(e['path']).parent) for e in assets))}
     (OUT/'manifest.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding='utf8')
     print('WebP: '+str(len(assets))+' assets, '+str(summary['total_bytes'])+' bytes')

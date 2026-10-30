@@ -63,6 +63,6 @@ scripts='<script src="data.js"></script><script src="storage.js"></script><scrip
 assert scripts in html
 html=html.replace(scripts,'<script>'+data+'</script><script>'+storage+'</script><script>'+app+'</script><script>'+coach+'</script><script>'+pwa+'</script>')
 html=html.replace('TreinaPro — Seu personal digital','TreinaPro — Portátil (arquivo único)')
-out=R.parent/'TreinaPro-v2.5-REV13-PORTATIL.html'
+out=R.parent/'TreinaPro-v2.6-REV14-PORTATIL.html'
 out.write_text(html,'utf8')
 print('Portable written',out,'bytes',out.stat().st_size)

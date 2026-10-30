@@ -8,7 +8,7 @@ src=(ROOT/'data.js').read_text()
 ids=re.findall(r"\{id:'([^']+)',name:'([^']+)',muscle:'([^']+)',equip:'[^']+',type:'([^']+)'",src)
 OUT=ROOT/'assets'/'exercises';OUT.mkdir(exist_ok=True)
 # Desenhos individualmente refinados: nao sobrescrever ao gerar variantes genericas.
-PROTECTED_2D={'agachamento','leg_press','extensora','supino','face_pull','coice_polia','remada_unilateral','supino_maquina','bulgaro','step_up','flexora','remada_baixa','desenvolvimento','crucifixo'}
+PROTECTED_2D={'agachamento','leg_press','extensora','supino','face_pull','coice_polia','remada_unilateral','supino_maquina','bulgaro','step_up','flexora','remada_baixa','desenvolvimento','crucifixo','supino_inclinado','elevacao_lateral','triceps_polia','triceps_frances','puxada_alta','rosca_direta','rosca_martelo','afundo','romeno','panturrilha','prancha','hip_thrust','abdutora','agachamento_goblet','abdominal'}
 BODY='#c4d5d7';BODY2='#91b0b4';ACC='#c6f65b';W='#587a80'
 def line(a,b,w=12,col=BODY):
  return f'<line x1="{a[0]}" y1="{a[1]}" x2="{b[0]}" y2="{b[1]}" stroke="{col}" stroke-width="{w}" stroke-linecap="round"/>'
