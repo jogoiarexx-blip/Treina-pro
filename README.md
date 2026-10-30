@@ -1,3 +1,34 @@
+# TreinaPro v2.8 — REV15: execução da auditoria de 30/10/2026
+
+Esta revisão aplica itens prioritários da auditoria técnica anterior, preservando IDs de planos e exercícios, chave `treinapro-personal-v1`, registros de séries/cargas, exportação e importação JSON.
+
+## Implementado
+
+- **Mobile:** barra fixa na demonstração do exercício para ir diretamente ao registro de séries, contador atualizado durante o treino, controles de pelo menos 44px e campos numéricos adequados à digitação no celular.
+- **Treinos interrompidos:** o início do treino passa a indicar `Retomar treino salvo`; troca de dia e divisão pergunta quando a sessão atual possui dados, sem excluí-los.
+- **Acessibilidade:** foco inicial e retorno do foco ao acionador após modais; Tab/Shift+Tab contidos no diálogo; Escape fecha os modais de exercícios, trocas e editor, e o onboarding mantém o foco no formulário.
+- **Evolução:** filtro de métricas e histórico de 7, 30 ou 90 dias, sem apagar o histórico completo; o gráfico de 7 dias e o resumo de 28 dias continuam com títulos próprios.
+- **Equipamentos:** preferência opcional de máquinas, polias, pesos livres ou corpo livre; usada na biblioteca e para ordenar alternativas de treino, sem modificar rotinas antigas.
+- **Orientações:** os 29 exercícios têm lista de 3 pontos de atenção para acompanhar os desenhos educativos. Isso **não** certifica exatidão biomecânica.
+- **Offline:** contador de arquivos efetivamente armazenados e indicação clara quando há downloads incompletos; a revisão do SW é `treinapro-v2.8-audit1`.
+- **Dados:** recuperação do perfil armazenado no IndexedDB não deixa mais a interface bloqueada por uma tela de boas-vindas anterior.
+- **Marca:** logos SVG, favicon, ícones PNG e manifesto PWA atualizados na revisão anterior.
+
+## Qualidade e testes
+
+- `node tests/audit-smoke.cjs` verifica a sintaxe dos scripts, 29 exercícios e seus 290 arquivos visuais vinculados, integridade de IDs e recursos críticos.
+- `tests/mobile-smoke.spec.cjs` automatiza com Playwright/Chromium as telas de boas-vindas, filtro da biblioteca, foco de modal, filtros da evolução, retomada de treino, cancelamento de troca, backup e recuperação pelo IndexedDB.
+- `.github/workflows/audit-qa.yml` executa os testes após alterações na branch main. **Testes configurados não equivalem a resultado aprovado**; consulte as execuções do GitHub Actions antes de declarar aprovação.
+- Revisão física de posturas/aparelhos dos 29 SVG, testes em celulares reais, diagnóstico de desempenho e refatoração de módulos ainda são pendências.
+
+## Links
+
+- Aplicativo: https://jogoiarexx-blip.github.io/Treina-pro/
+- Código: https://github.com/jogoiarexx-blip/Treina-pro
+- CI: https://github.com/jogoiarexx-blip/Treina-pro/actions/workflows/audit-qa.yml
+
+---
+
 # TreinaPro v2.6 — REV14: todos os 29 exercícios com 2D individualizado
 
 ## Evolução dos desenhos técnicos
