@@ -1,14 +1,16 @@
-# TreinaPro v2.1 — REV6: melhorias inspiradas no openGym
+# TreinaPro v2.1 — REV7: substituição de exercícios
 
-Atualização própria do TreinaPro baseada em boas práticas de aplicativos de treino, sem copiar código nem imagens do openGym (AGPL-3.0 / mídia com direitos de uso separados).
+Inspirado na experiência de treino de projetos abertos, com implementação original e sem copiar código ou mídias externas.
 
-- Filtro de exercícios por equipamento: máquinas, polias e cabos, halteres e barras, corpo livre e acessórios. Combina com a busca e o filtro muscular.
-- Resumo dos últimos 28 dias: dias ativos e treinos concluídos, calculados do histórico já existente.
-- Gráfico de séries concluídas por grupo muscular principal: sem presumir fadiga, recuperação ou uso de músculos secundários.
-- Mantidos os 29 exercícios em 2D, programas ABC e inferiores/superiores, registro de séries, cargas e histórico.
-- Chaves locais `treinapro-personal-v1` e IndexedDB preservadas.
-- PWA e cache atualizados para `treinapro-v2.1-rev6`.
+- Botão "Aparelho ocupado? Trocar" nos exercícios do treino atual.
+- Sugestões selecionadas do catálogo existente, sem duplicar exercícios do mesmo treino.
+- Número de séries planejadas é preservado conforme o exercício original.
+- Troca disponível apenas antes de registrar peso, repetições ou concluir séries; nenhuma série anterior é excluída.
+- Permite reverter ao exercício original.
+- Histórico mantém os exercícios realizados e um mapa `substitutions` de trocas na sessão finalizada.
+- Persistência das trocas na sessão existente do localStorage `treinapro-personal-v1` e IndexedDB.
+- Treinos ABC, pernas/superiores, 29 exercícios 2D e modo offline mantidos.
 
-Referências: https://github.com/DuarteSantos8/openGym e https://github.com/DuarteSantos8/openGym/blob/main/NOTICE.md
+Alternativas podem ter técnica, padrão de movimento ou carga diferentes. As sugestões não garantem equivalência biomecânica.
 
-Não foram importadas imagens Gym visual nem código AGPL. As demonstrações continuam educativas e não avaliam postura em tempo real.
+Para gerar arquivo único portátil: `python make_portable.py`.
