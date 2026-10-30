@@ -1,5 +1,5 @@
 {
-  "version": "treinapro-v2.4-rev12",
+  "version": "treinapro-v2.5-rev13",
   "assets": [
     {
       "path": "assets/webp/exercises/abdominal.webp",
@@ -484,14 +484,31 @@
     {
       "path": "assets/webp/ui/offline.webp",
       "bytes": 5582
+    },
+    {
+      "path": "assets/featured/desenvolvimento.webp",
+      "bytes": 16506
+    },
+    {
+      "path": "assets/featured/face_pull.webp",
+      "bytes": 15414
+    },
+    {
+      "path": "assets/featured/leg_press.webp",
+      "bytes": 19856
+    },
+    {
+      "path": "assets/featured/supino_maquina.webp",
+      "bytes": 18306
     }
   ],
-  "total_bytes": 1402638,
+  "total_bytes": 1472720,
   "by_folder": {
     "assets/webp/exercises": 29,
     "assets/webp/frames/start": 29,
     "assets/webp/frames/finish": 29,
     "assets/webp/still": 29,
-    "assets/webp/ui": 5
+    "assets/webp/ui": 5,
+    "assets/featured": 4
   }
 }
