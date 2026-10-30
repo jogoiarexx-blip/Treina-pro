@@ -1,17 +1,17 @@
 {
-  "version": "treinapro-v2.5-rev13",
+  "version": "treinapro-v2.6-rev14",
   "assets": [
     {
       "path": "assets/webp/exercises/abdominal.webp",
-      "bytes": 6630
+      "bytes": 6370
     },
     {
       "path": "assets/webp/exercises/abdutora.webp",
-      "bytes": 8740
+      "bytes": 7204
     },
     {
       "path": "assets/webp/exercises/afundo.webp",
-      "bytes": 8556
+      "bytes": 7202
     },
     {
       "path": "assets/webp/exercises/agachamento.webp",
@@ -19,7 +19,7 @@
     },
     {
       "path": "assets/webp/exercises/agachamento_goblet.webp",
-      "bytes": 7824
+      "bytes": 6452
     },
     {
       "path": "assets/webp/exercises/bulgaro.webp",
@@ -39,7 +39,7 @@
     },
     {
       "path": "assets/webp/exercises/elevacao_lateral.webp",
-      "bytes": 8598
+      "bytes": 6934
     },
     {
       "path": "assets/webp/exercises/extensora.webp",
@@ -55,7 +55,7 @@
     },
     {
       "path": "assets/webp/exercises/hip_thrust.webp",
-      "bytes": 8416
+      "bytes": 6394
     },
     {
       "path": "assets/webp/exercises/leg_press.webp",
@@ -63,15 +63,15 @@
     },
     {
       "path": "assets/webp/exercises/panturrilha.webp",
-      "bytes": 8136
+      "bytes": 7530
     },
     {
       "path": "assets/webp/exercises/prancha.webp",
-      "bytes": 7614
+      "bytes": 6648
     },
     {
       "path": "assets/webp/exercises/puxada_alta.webp",
-      "bytes": 8374
+      "bytes": 8474
     },
     {
       "path": "assets/webp/exercises/remada_baixa.webp",
@@ -83,15 +83,15 @@
     },
     {
       "path": "assets/webp/exercises/romeno.webp",
-      "bytes": 8516
+      "bytes": 7058
     },
     {
       "path": "assets/webp/exercises/rosca_direta.webp",
-      "bytes": 7766
+      "bytes": 6500
     },
     {
       "path": "assets/webp/exercises/rosca_martelo.webp",
-      "bytes": 8238
+      "bytes": 6912
     },
     {
       "path": "assets/webp/exercises/step_up.webp",
@@ -103,7 +103,7 @@
     },
     {
       "path": "assets/webp/exercises/supino_inclinado.webp",
-      "bytes": 9808
+      "bytes": 7548
     },
     {
       "path": "assets/webp/exercises/supino_maquina.webp",
@@ -111,23 +111,23 @@
     },
     {
       "path": "assets/webp/exercises/triceps_frances.webp",
-      "bytes": 8094
+      "bytes": 6874
     },
     {
       "path": "assets/webp/exercises/triceps_polia.webp",
-      "bytes": 7886
+      "bytes": 8220
     },
     {
       "path": "assets/webp/frames/start/abdominal.webp",
-      "bytes": 12724
+      "bytes": 7890
     },
     {
       "path": "assets/webp/frames/start/abdutora.webp",
-      "bytes": 14386
+      "bytes": 8826
     },
     {
       "path": "assets/webp/frames/start/afundo.webp",
-      "bytes": 14486
+      "bytes": 9404
     },
     {
       "path": "assets/webp/frames/start/agachamento.webp",
@@ -135,7 +135,7 @@
     },
     {
       "path": "assets/webp/frames/start/agachamento_goblet.webp",
-      "bytes": 13646
+      "bytes": 8266
     },
     {
       "path": "assets/webp/frames/start/bulgaro.webp",
@@ -155,7 +155,7 @@
     },
     {
       "path": "assets/webp/frames/start/elevacao_lateral.webp",
-      "bytes": 13972
+      "bytes": 8312
     },
     {
       "path": "assets/webp/frames/start/extensora.webp",
@@ -171,7 +171,7 @@
     },
     {
       "path": "assets/webp/frames/start/hip_thrust.webp",
-      "bytes": 14742
+      "bytes": 8098
     },
     {
       "path": "assets/webp/frames/start/leg_press.webp",
@@ -179,15 +179,15 @@
     },
     {
       "path": "assets/webp/frames/start/panturrilha.webp",
-      "bytes": 13964
+      "bytes": 9066
     },
     {
       "path": "assets/webp/frames/start/prancha.webp",
-      "bytes": 14212
+      "bytes": 8328
     },
     {
       "path": "assets/webp/frames/start/puxada_alta.webp",
-      "bytes": 14914
+      "bytes": 10170
     },
     {
       "path": "assets/webp/frames/start/remada_baixa.webp",
@@ -199,15 +199,15 @@
     },
     {
       "path": "assets/webp/frames/start/romeno.webp",
-      "bytes": 15178
+      "bytes": 8878
     },
     {
       "path": "assets/webp/frames/start/rosca_direta.webp",
-      "bytes": 13758
+      "bytes": 7932
     },
     {
       "path": "assets/webp/frames/start/rosca_martelo.webp",
-      "bytes": 14182
+      "bytes": 8528
     },
     {
       "path": "assets/webp/frames/start/step_up.webp",
@@ -219,7 +219,7 @@
     },
     {
       "path": "assets/webp/frames/start/supino_inclinado.webp",
-      "bytes": 15840
+      "bytes": 9176
     },
     {
       "path": "assets/webp/frames/start/supino_maquina.webp",
@@ -227,23 +227,23 @@
     },
     {
       "path": "assets/webp/frames/start/triceps_frances.webp",
-      "bytes": 14016
+      "bytes": 8336
     },
     {
       "path": "assets/webp/frames/start/triceps_polia.webp",
-      "bytes": 13456
+      "bytes": 9424
     },
     {
       "path": "assets/webp/frames/finish/abdominal.webp",
-      "bytes": 13640
+      "bytes": 7660
     },
     {
       "path": "assets/webp/frames/finish/abdutora.webp",
-      "bytes": 14644
+      "bytes": 8932
     },
     {
       "path": "assets/webp/frames/finish/afundo.webp",
-      "bytes": 14464
+      "bytes": 8796
     },
     {
       "path": "assets/webp/frames/finish/agachamento.webp",
@@ -251,7 +251,7 @@
     },
     {
       "path": "assets/webp/frames/finish/agachamento_goblet.webp",
-      "bytes": 14762
+      "bytes": 8004
     },
     {
       "path": "assets/webp/frames/finish/bulgaro.webp",
@@ -271,7 +271,7 @@
     },
     {
       "path": "assets/webp/frames/finish/elevacao_lateral.webp",
-      "bytes": 14216
+      "bytes": 8190
     },
     {
       "path": "assets/webp/frames/finish/extensora.webp",
@@ -287,7 +287,7 @@
     },
     {
       "path": "assets/webp/frames/finish/hip_thrust.webp",
-      "bytes": 14858
+      "bytes": 7524
     },
     {
       "path": "assets/webp/frames/finish/leg_press.webp",
@@ -295,15 +295,15 @@
     },
     {
       "path": "assets/webp/frames/finish/panturrilha.webp",
-      "bytes": 15128
+      "bytes": 9018
     },
     {
       "path": "assets/webp/frames/finish/prancha.webp",
-      "bytes": 14212
+      "bytes": 8080
     },
     {
       "path": "assets/webp/frames/finish/puxada_alta.webp",
-      "bytes": 14462
+      "bytes": 9168
     },
     {
       "path": "assets/webp/frames/finish/remada_baixa.webp",
@@ -315,15 +315,15 @@
     },
     {
       "path": "assets/webp/frames/finish/romeno.webp",
-      "bytes": 14716
+      "bytes": 8860
     },
     {
       "path": "assets/webp/frames/finish/rosca_direta.webp",
-      "bytes": 13998
+      "bytes": 7696
     },
     {
       "path": "assets/webp/frames/finish/rosca_martelo.webp",
-      "bytes": 14404
+      "bytes": 8110
     },
     {
       "path": "assets/webp/frames/finish/step_up.webp",
@@ -335,7 +335,7 @@
     },
     {
       "path": "assets/webp/frames/finish/supino_inclinado.webp",
-      "bytes": 16538
+      "bytes": 9366
     },
     {
       "path": "assets/webp/frames/finish/supino_maquina.webp",
@@ -343,23 +343,23 @@
     },
     {
       "path": "assets/webp/frames/finish/triceps_frances.webp",
-      "bytes": 14472
+      "bytes": 8632
     },
     {
       "path": "assets/webp/frames/finish/triceps_polia.webp",
-      "bytes": 14398
+      "bytes": 9684
     },
     {
       "path": "assets/webp/still/abdominal.webp",
-      "bytes": 9336
+      "bytes": 7890
     },
     {
       "path": "assets/webp/still/abdutora.webp",
-      "bytes": 10556
+      "bytes": 8826
     },
     {
       "path": "assets/webp/still/afundo.webp",
-      "bytes": 10684
+      "bytes": 9404
     },
     {
       "path": "assets/webp/still/agachamento.webp",
@@ -367,7 +367,7 @@
     },
     {
       "path": "assets/webp/still/agachamento_goblet.webp",
-      "bytes": 10414
+      "bytes": 8266
     },
     {
       "path": "assets/webp/still/bulgaro.webp",
@@ -387,7 +387,7 @@
     },
     {
       "path": "assets/webp/still/elevacao_lateral.webp",
-      "bytes": 10844
+      "bytes": 8312
     },
     {
       "path": "assets/webp/still/extensora.webp",
@@ -403,7 +403,7 @@
     },
     {
       "path": "assets/webp/still/hip_thrust.webp",
-      "bytes": 10904
+      "bytes": 8098
     },
     {
       "path": "assets/webp/still/leg_press.webp",
@@ -411,15 +411,15 @@
     },
     {
       "path": "assets/webp/still/panturrilha.webp",
-      "bytes": 10704
+      "bytes": 9066
     },
     {
       "path": "assets/webp/still/prancha.webp",
-      "bytes": 9958
+      "bytes": 8328
     },
     {
       "path": "assets/webp/still/puxada_alta.webp",
-      "bytes": 11062
+      "bytes": 10170
     },
     {
       "path": "assets/webp/still/remada_baixa.webp",
@@ -431,15 +431,15 @@
     },
     {
       "path": "assets/webp/still/romeno.webp",
-      "bytes": 11102
+      "bytes": 8878
     },
     {
       "path": "assets/webp/still/rosca_direta.webp",
-      "bytes": 10232
+      "bytes": 7932
     },
     {
       "path": "assets/webp/still/rosca_martelo.webp",
-      "bytes": 10414
+      "bytes": 8528
     },
     {
       "path": "assets/webp/still/step_up.webp",
@@ -451,7 +451,7 @@
     },
     {
       "path": "assets/webp/still/supino_inclinado.webp",
-      "bytes": 11690
+      "bytes": 9176
     },
     {
       "path": "assets/webp/still/supino_maquina.webp",
@@ -459,11 +459,11 @@
     },
     {
       "path": "assets/webp/still/triceps_frances.webp",
-      "bytes": 10152
+      "bytes": 8336
     },
     {
       "path": "assets/webp/still/triceps_polia.webp",
-      "bytes": 10346
+      "bytes": 9424
     },
     {
       "path": "assets/webp/ui/brand.webp",
@@ -502,7 +502,7 @@
       "bytes": 18306
     }
   ],
-  "total_bytes": 1472720,
+  "total_bytes": 1254046,
   "by_folder": {
     "assets/webp/exercises": 29,
     "assets/webp/frames/start": 29,
