@@ -98,8 +98,17 @@ def build():
             im=Image.open(io.BytesIO(png))
             assets.append(save(im,OUT/target/(f.stem+'.webp')))
     assets.extend(make_ui())
-    if len(assets)!=121:raise RuntimeError('Wrong number of assets')
-    summary={'version':'treinapro-v2.4-rev12','assets':assets,'total_bytes':sum(e['bytes'] for e in assets),
+    # New authored exercise artwork, not just another encoding of the old thumbnails.
+    featured=ROOT/'assets'/'featured'/'svg'
+    featured_files=sorted(featured.glob('*.svg'))
+    if {f.stem for f in featured_files}!={'supino_maquina','leg_press','desenvolvimento','face_pull'}:
+        raise RuntimeError('Expected four original featured illustrations')
+    for f in featured_files:
+        png=cairosvg.svg2png(url=str(f),output_width=800)
+        im=Image.open(io.BytesIO(png))
+        assets.append(save(im,ROOT/'assets'/'featured'/(f.stem+'.webp'),86))
+    if len(assets)!=125:raise RuntimeError('Wrong number of assets')
+    summary={'version':'treinapro-v2.5-rev13','assets':assets,'total_bytes':sum(e['bytes'] for e in assets),
              'by_folder':dict(Counter(str(Path(e['path']).parent) for e in assets))}
     (OUT/'manifest.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding='utf8')
     print('WebP: '+str(len(assets))+' assets, '+str(summary['total_bytes'])+' bytes')

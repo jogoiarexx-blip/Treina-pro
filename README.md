@@ -1,24 +1,11 @@
-# TreinaPro v2.4 — REV12: pacote visual WebP
+# TreinaPro v2.5 REV13 — novas artes 2D visíveis no aplicativo
 
-## Imagens integradas
-A revisão cria **121 WebP** para os recursos estáticos:
-- **29 imagens de exercícios** em `assets/webp/exercises/`.
-- **58 imagens de etapas** em `assets/webp/frames/start` e `frames/finish`.
-- **29 imagens pausadas** em `assets/webp/still`.
-- **5 imagens de interface** em `assets/webp/ui`: marca, hero, biblioteca, histórico vazio e offline.
-- As animações **normal e lenta continuam em SVG**, evitando perder movimento e resolução.
-- Se o WebP não carregar por causa de um cache antigo, a interface retorna automaticamente ao SVG original.
+A REV12 apenas convertia os desenhos anteriores. A REV13 traz **quatro novas ilustrações autorais com atletas e equipamentos**, criadas especificamente para diferenciar o visual do aplicativo: supino na máquina, leg press, desenvolvimento de ombros e face pull.
 
-## Geração e publicação
-O script `build_webp_assets.py` gera os arquivos WebP a partir dos SVGs autorais corrigidos (CairoSVG e Pillow). O fluxo `.github/workflows/build-webp.yml` converte, valida 121 WebP e adiciona os arquivos à branch principal.
+Elas aparecem em **Movimentos em destaque** na tela inicial, na imagem principal do treino e nas quatro fichas correspondentes da biblioteca. Cada card abre o guia 2D animado original, para evitar que a arte estática substitua uma demonstração técnica.
 
-Para regenerar localmente:
-```sh
-python -m pip install pillow cairosvg
-python build_webp_assets.py
-```
+Arquivos de origem: `assets/featured/svg/*.svg` (quatro artes diferentes); arquivos publicados: `assets/featured/*.webp`.
 
-O cache offline `treinapro-v2.4-rev12` inclui os WebP e as demonstrações animadas; manutenção da chave de dados `treinapro-personal-v1`, planos, histórico e metas.
+O gerador `build_webp_assets.py` e o GitHub Actions convertem os quatro SVG em WebP e os publicam automaticamente, além dos 121 assets estáticos anteriores. O app faz fallback para o SVG novo se o WebP ainda não estiver disponível.
 
-## Validação da publicação WebP
-Os 121 arquivos foram efetivamente gerados e adicionados ao repositório pelo GitHub Actions. As imagens estáticas são WebP, enquanto os modos animados e lentos permanecem SVG. A interface possui fallback para as ilustrações vetoriais caso algum WebP esteja indisponível.
+Serviço offline: `treinapro-v2.5-rev13`. Histórico, perfis, planos, séries/repetições e 29 animações 2D preservados. Os novos quadros são ilustrativos e não substituem instrução biomecânica.

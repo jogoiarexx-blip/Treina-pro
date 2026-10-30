@@ -45,12 +45,24 @@ for name in ('brand','hero-workout','empty-history','library','offline'):
         app=app.replace(original,target)
         pwa=pwa.replace(original,target)
 
+# Embed the original featured WebP drawings in the single-file edition.
+for name in ('supino_maquina','leg_press','desenvolvimento','face_pull'):
+    preferred=R/'assets'/'featured'/(name+'.webp')
+    fallback=R/'assets'/'featured'/'svg'/(name+'.svg')
+    if not preferred.exists() and not fallback.exists():
+        raise RuntimeError('Original featured art missing: '+name)
+    url=uri(preferred if preferred.exists() else fallback)
+    target='assets/featured/'+name+'.webp'
+    app=app.replace(target,url)
+    html=html.replace(target,url)
+
+
 html=html.replace('<link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="manifest" href="manifest.webmanifest">','')
 html=html.replace('<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="pwa.css">','<style>'+css+'</style>')
 scripts='<script src="data.js"></script><script src="storage.js"></script><script src="app.js"></script><script src="coach.js"></script><script src="pwa.js"></script>'
 assert scripts in html
 html=html.replace(scripts,'<script>'+data+'</script><script>'+storage+'</script><script>'+app+'</script><script>'+coach+'</script><script>'+pwa+'</script>')
 html=html.replace('TreinaPro — Seu personal digital','TreinaPro — Portátil (arquivo único)')
-out=R.parent/'TreinaPro-v2.4-REV12-PORTATIL.html'
+out=R.parent/'TreinaPro-v2.5-REV13-PORTATIL.html'
 out.write_text(html,'utf8')
 print('Portable written',out,'bytes',out.stat().st_size)
