@@ -1,5 +1,5 @@
 /* TreinaPro REV14: cache resiliente, sem travar o primeiro uso para baixar todas as ilustrações. */
-const VERSION='treinapro-v2.7-brand1';
+const VERSION='treinapro-v2.8-audit1';
 const SHELL=[ './', './index.html','./style.css','./pwa.css','./data.js','./storage.js','./app.js','./coach.js','./pwa.js','./manifest.webmanifest','./assets/icon-192.png','./assets/icon-512.png','./assets/favicon.svg','./assets/treinapro-icon.svg','./assets/treinapro-logo.svg'];
 const IDS=['supino','supino_inclinado','crucifixo','elevacao_lateral','triceps_polia','triceps_frances','puxada_alta','remada_baixa','remada_unilateral','face_pull','rosca_direta','rosca_martelo','agachamento','leg_press','extensora','afundo','romeno','flexora','panturrilha','prancha','hip_thrust','abdutora','bulgaro','desenvolvimento','supino_maquina','agachamento_goblet','step_up','abdominal','coice_polia'];
 const THUMBNAILS=IDS.map(id=>`./assets/webp/exercises/${id}.webp`);
@@ -60,9 +60,16 @@ self.addEventListener('fetch',event=>{
  // CSS, JS, SVG e manifest: cache primeiro. O SW novo renova o núcleo na instalação.
  event.respondWith(cachedFirst(request));
 });
+const OPTIONAL_ASSETS=[...THUMBNAILS,...FULL_DEMOS,...UI_WEBP,...FEATURED_WEBP];
+async function offlineStatus(){
+ const cache=await caches.open(VERSION);let cached=0;
+ // Match apenas no cache da revisão atual; não declarar como disponível se estiver no cache antigo.
+ for(const asset of OPTIONAL_ASSETS)if(await cache.match(normalized(asset)))cached++;
+ return {cached,total:OPTIONAL_ASSETS.length,missing:OPTIONAL_ASSETS.length-cached};
+}
 async function prepareOffline(port){
  const cache=await caches.open(VERSION);let done=0,failed=0;
- const files=[...THUMBNAILS,...FULL_DEMOS,...UI_WEBP,...FEATURED_WEBP];const total=files.length;
+ const files=OPTIONAL_ASSETS;const total=files.length;
  let index=0;
  async function worker(){while(index<files.length){const path=files[index++],url=normalized(path);
    try{
@@ -76,10 +83,15 @@ async function prepareOffline(port){
    }catch{failed++}finally{done++;if(done===total||done%12===0)port.postMessage({type:'PROGRESS',done,total,failed});}
  }}
  await Promise.all(Array.from({length:4},worker));
- port.postMessage({type:'DONE',done,total,failed});
+ const result=await offlineStatus();
+ port.postMessage({type:'DONE',done,total,failed,...result});
 }
 self.addEventListener('message',event=>{
  if(event.data?.type==='ACTIVATE_UPDATE'){event.waitUntil(self.skipWaiting());return;}
+ if(event.data?.type==='OFFLINE_STATUS'&&event.ports?.[0]){
+   const port=event.ports[0];event.waitUntil(offlineStatus().then(status=>port.postMessage({type:'STATUS',...status})).catch(error=>port.postMessage({type:'ERROR',error:String(error)})));
+   return;
+ }
  if(event.data?.type==='PREPARE_OFFLINE'&&event.ports?.[0]){
    const port=event.ports[0];event.waitUntil(prepareOffline(port).catch(error=>port.postMessage({type:'ERROR',error:String(error)})));
  }
