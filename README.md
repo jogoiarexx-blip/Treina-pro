@@ -19,3 +19,6 @@ python build_webp_assets.py
 ```
 
 O cache offline `treinapro-v2.4-rev12` inclui os WebP e as demonstrações animadas; manutenção da chave de dados `treinapro-personal-v1`, planos, histórico e metas.
+
+## Validação da publicação WebP
+Os 121 arquivos foram efetivamente gerados e adicionados ao repositório pelo GitHub Actions. As imagens estáticas são WebP, enquanto os modos animados e lentos permanecem SVG. A interface possui fallback para as ilustrações vetoriais caso algum WebP esteja indisponível.
