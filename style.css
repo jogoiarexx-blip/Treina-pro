@@ -338,3 +338,25 @@ button.week-day:hover{border-color:var(--lime);background:#203b32}
 .motion-explain strong{display:block;margin-bottom:6px;color:#d7ff75;font-size:13px;letter-spacing:.02em}
 .motion-explain p{margin:0;color:#dce9e4;font-size:13px;line-height:1.5}
 .motion-caption{margin-bottom:8px}
+
+/* REV6: filtro por equipamento e resumo de treinos no próprio navegador. */
+.library-count{margin:-2px 0 14px;font-size:13px;color:#b0c8c0}
+.training-summary{margin:24px 0 28px}
+.training-overview{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.training-heat-card,.training-muscle-card{min-width:0;background:#122934;border:1px solid #345359;border-radius:17px;padding:17px}
+.training-overview-stat{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:15px}
+.training-overview-stat strong{color:#d7ff75;font-size:23px;font-variant-numeric:tabular-nums}
+.training-overview-stat span{font-size:12px;color:#cadcd6;margin-right:12px}
+.training-heat-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
+.heat-day{display:block;aspect-ratio:1;border-radius:7px;min-width:0;border:1px solid rgba(200,240,204,.17)}
+.heat-0{background:#203640}.heat-1{background:#478e73}.heat-2{background:#8ad45e}.heat-3{background:#c6f65b}
+.heat-today{outline:2px solid #d8f6b6;outline-offset:2px}
+.heat-legend{font-size:11px;color:#b1c8bd;line-height:1.55;margin-top:11px}
+.training-muscle-card h3{font-size:16px;color:#f0ffe7;margin-bottom:13px}
+.training-muscle-list{display:grid;gap:10px}
+.muscle-stat-label{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:#cfdfd6;margin-bottom:5px}
+.muscle-stat-label strong{color:#d7ff75;font-variant-numeric:tabular-nums}
+.muscle-stat-track{height:7px;background:#203b45;border-radius:999px;overflow:hidden}
+.muscle-stat-track span{display:block;height:100%;background:#a6df64;border-radius:999px}
+@media(max-width:740px){.training-overview{grid-template-columns:1fr}.training-heat-card,.training-muscle-card{padding:14px}}
+@media(max-width:320px){.training-heat-grid{gap:4px}.training-overview-stat{gap:6px}.training-overview-stat span{margin-right:4px}}
