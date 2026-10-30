@@ -99,7 +99,7 @@
        if(!state.next||typeof state.next!=='object')state.next={abc:0,quad:0};
        // Um navegador fechado à força não pode contabilizar horas fora do treino.
        freezeOrphanedTimers();
-       render();if(needsWelcome())renderWelcome();else $('welcomeRoot').innerHTML='';
+       render();if(needsWelcome())renderWelcome();else dismissWelcome();
      }else if(!snapshot && Number(state._savedAt||0)===0){
        // Migração única de registros antigos, sem remover a cópia existente.
        save();
