@@ -56,6 +56,7 @@ for phase,dir_name in [(0,'start'),(1,'finish')]:
  target=ROOT/'assets'/'frames'/dir_name
  target.mkdir(parents=True,exist_ok=True)
  for id,name,muscle,variant in art.ids:
+  if id in art.PROTECTED_2D: continue
   drawing=art.horizontal(muscle,variant,phase) if variant in ('bench','fly','row','legpress','extension','curlleg','hip') else art.portrait(phase,muscle,variant)
   label=html.escape(name)
   # Spacious portrait card with clear body and single pose; outer glow increases contrast on smaller screens.

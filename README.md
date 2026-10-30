@@ -1,20 +1,18 @@
-# TreinaPro v2.2 — REV9: séries/repetições individuais e demonstrações 2D específicas
+# TreinaPro v2.2 — REV10: demonstrações 2D próprias por exercício
 
-## Personalização
-- Dentro de **Editar treino**, cada exercício possui o botão **Séries/reps**.
-- Cada dia de cada programa tem metas independentes, com **1 a 8 séries**, repetições (como `8–12`) ou duração (como `30 s`).
-- Valores são validados antes de salvar; o contador de séries, registro e histórico seguem as metas.
-- Metas são armazenadas em `state.workoutTargets[programa][dia][exercícioOriginal]` dentro da chave anterior `treinapro-personal-v1` e IndexedDB existente.
-- O usuário pode restaurar a meta padrão de um exercício ou o dia inteiro.
-- Mudanças ficam bloqueadas se o treino do dia tiver peso, repetições ou séries registrados. Não se modificam logs históricos.
-- Após finalizar, o histórico registra `exerciseOrder` com séries, repetições planejadas e o exercício realizado.
-- Alternativas do mesmo grupo muscular passam a ser reconhecidas também depois de reabrir o aplicativo.
+A REV10 substitui 24 SVGs genéricos por demonstrações próprias de:
 
-## Demonstrações 2D
-- **Face pull**: personagem em pé, corda da polia alta se aproximando do rosto, com cotovelos se movendo.
-- **Coice na polia**: tornozeleira, polia baixa e perna de trabalho estendendo para trás com o tronco apoiado.
-- Foram substituídos os 12 SVGs correspondentes: comparativos, quadros inicial/final e animações normal/lenta/pausada.
-- As mídias são desenhos SVG próprios do projeto; não foram copiadas animações de openGym/Gym visual.
-- **Atenção ao manter o código:** os geradores antigos `make_illustrations.py`, `make_frames.py`, `make_animations.py` e `make_rev3_2d.py` ainda usam variantes genéricas e podem sobrescrever essas melhorias se executados novamente. Mantenha os SVGs específicos da REV9 quando regenerar o catálogo.
+- **Remada unilateral com halter:** mão e joelho apoiados no banco, halter se desloca próximo ao quadril, sem girar o tronco.
+- **Supino na máquina:** encosto, assento, torre de pesos e alças no nível do peito; os braços empurram para a frente.
+- **Agachamento búlgaro:** pé traseiro em banco baixo, pé dianteiro fixo e flexão da perna da frente.
+- **Step-up:** degrau estável, perna apoiada elevando o corpo e retorno controlado.
 
-Perfil, backups, modo offline, histórico, programas e os demais 27 exercícios 2D são preservados. As animações são guias esquemáticos, não uma avaliação da postura nem substitutos de supervisão profissional.
+Cada exercício teve 6 mídias substituídas: comparativo de posições, quadro inicial, quadro final, modo pausado, animação normal e animação lenta.
+
+Os movimentos são criados com vetores SVG 2D autorais, sem copiar animações de terceiros, e são somente **referências educativas**, não avaliação de técnica nem recomendação de carga.
+
+Os geradores `make_illustrations.py`, `make_animations.py` e `make_frames.py` agora preservam os 10 exercícios refinados nas REV3, REV9 e REV10 para evitar regressões de arte. Não remova `PROTECTED_2D` ao atualizar outros desenhos.
+
+Demais recursos preservados: 29 exercícios, treino ABC e divisão pernas/superiores, metas individuais de séries e repetições, troca de aparelhos, histórico, backups, armazenamento `treinapro-personal-v1`, PWA offline.
+
+Para reconstruir o HTML portátil: `python make_portable.py`. Cache do service worker: `treinapro-v2.2-rev10`.

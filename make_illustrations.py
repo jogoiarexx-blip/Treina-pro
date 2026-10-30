@@ -7,6 +7,8 @@ ROOT=Path(__file__).parent
 src=(ROOT/'data.js').read_text()
 ids=re.findall(r"\{id:'([^']+)',name:'([^']+)',muscle:'([^']+)',equip:'[^']+',type:'([^']+)'",src)
 OUT=ROOT/'assets'/'exercises';OUT.mkdir(exist_ok=True)
+# Desenhos individualmente refinados: nao sobrescrever ao gerar variantes genericas.
+PROTECTED_2D={'agachamento','leg_press','extensora','supino','face_pull','coice_polia','remada_unilateral','supino_maquina','bulgaro','step_up'}
 BODY='#c4d5d7';BODY2='#91b0b4';ACC='#c6f65b';W='#587a80'
 def line(a,b,w=12,col=BODY):
  return f'<line x1="{a[0]}" y1="{a[1]}" x2="{b[0]}" y2="{b[1]}" stroke="{col}" stroke-width="{w}" stroke-linecap="round"/>'
@@ -128,6 +130,7 @@ def horizontal(muscle,variant,phase):
  return eq+fig(head,shoulder,hip,el1,ha1,el2,ha2,k1,f1,k2,f2,muscle)
 
 for id,name,muscle,variant in ids:
+ if id in PROTECTED_2D: continue
  label=name.upper();label=label[:29]+('…' if len(label)>29 else '')
  parts=[]
  for phase,x in enumerate([7,287]):

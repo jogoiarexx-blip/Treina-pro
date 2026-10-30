@@ -15,6 +15,7 @@ outdirs={k:ROOT/'assets'/k for k in ['motion','motion-slow','still']}
 for p in outdirs.values():p.mkdir(exist_ok=True,parents=True)
 count=0
 for id,name,muscle,variant in art.ids:
+    if id in art.PROTECTED_2D: continue
     portraits=[]
     for phase in (0,1):
         raw=(art.horizontal(muscle,variant,phase) if variant in ('bench','fly','row','legpress','extension','curlleg','hip') else art.portrait(phase,muscle,variant))
