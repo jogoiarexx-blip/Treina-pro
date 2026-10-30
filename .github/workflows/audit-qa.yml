@@ -1,0 +1,54 @@
+name: TreinaPro QA - auditoria e navegacao
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'app.js'
+      - 'data.js'
+      - 'style.css'
+      - 'pwa.js'
+      - 'sw.js'
+      - 'storage.js'
+      - 'coach.js'
+      - 'assets/**'
+      - 'tests/**'
+      - '.github/workflows/audit-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Analisar sintaxe e validar todos os 29 exercicios
+        run: node tests/audit-smoke.cjs
+  mobile-smoke:
+    needs: static-audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Preparar Playwright
+        run: |
+          npm install --no-save --no-audit --no-fund @playwright/test@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Iniciar TreinaPro como site local
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/treinapro-qa-server.log 2>&1 &
+          for attempt in 1 2 3 4 5 6 7 8; do
+            curl --fail --silent http://127.0.0.1:8765/ >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/treinapro-qa-server.log
+          exit 1
+      - name: Testar onboarding, treino parcial, modais, filtros e backup
+        run: npx playwright test tests/mobile-smoke.spec.cjs --browser=chromium --workers=1 --reporter=line
