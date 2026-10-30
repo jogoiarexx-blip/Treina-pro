@@ -1,18 +1,22 @@
-# TreinaPro v2.2 — REV10: demonstrações 2D próprias por exercício
+# TreinaPro v2.3 — REV11: quatro demonstrações 2D individualizadas
 
-A REV10 substitui 24 SVGs genéricos por demonstrações próprias de:
+## Desenhos refeitos
 
-- **Remada unilateral com halter:** mão e joelho apoiados no banco, halter se desloca próximo ao quadril, sem girar o tronco.
-- **Supino na máquina:** encosto, assento, torre de pesos e alças no nível do peito; os braços empurram para a frente.
-- **Agachamento búlgaro:** pé traseiro em banco baixo, pé dianteiro fixo e flexão da perna da frente.
-- **Step-up:** degrau estável, perna apoiada elevando o corpo e retorno controlado.
+- **Mesa flexora deitada (`flexora`)**: banco longo, quadril apoiado, eixo do joelho e rolo que acompanha o tornozelo enquanto a perna flexiona. O catálogo descreve *mesa flexora*, não cadeira flexora sentada.
+- **Remada baixa sentada (`remada_baixa`)**: torre de pesos, cabo e pegador, apoio dos pés e banco; os braços puxam o pegador na direção da cintura sem mover o tronco.
+- **Desenvolvimento de ombros (`desenvolvimento`)**: vista frontal, dois halteres, assento/encosto; cada braço empurra os halteres acima da cabeça.
+- **Crucifixo com halteres (`crucifixo`)**: vista superior do banco; halteres se afastam em arco com cotovelos levemente flexionados, evitando confundí-lo com supino.
 
-Cada exercício teve 6 mídias substituídas: comparativo de posições, quadro inicial, quadro final, modo pausado, animação normal e animação lenta.
+Cada exercício agora possui seis arquivos SVG próprios: comparação de posições, quadro inicial, quadro final, pausado, animação normal e animação lenta. Total: **24 SVGs substituídos**.
 
-Os movimentos são criados com vetores SVG 2D autorais, sem copiar animações de terceiros, e são somente **referências educativas**, não avaliação de técnica nem recomendação de carga.
+**Não copiar/regerar por engano:** `PROTECTED_2D` em `make_illustrations.py` protege os 14 exercícios refinados nas REV3/9/10/11. `make_animations.py` e `make_frames.py` leem a mesma proteção para não sobrescrever as mídias. Gerar novas variantes genéricas não atualiza esses exercícios; suas mídias 2D têm edição individual.
 
-Os geradores `make_illustrations.py`, `make_animations.py` e `make_frames.py` agora preservam os 10 exercícios refinados nas REV3, REV9 e REV10 para evitar regressões de arte. Não remova `PROTECTED_2D` ao atualizar outros desenhos.
+## Preservações
 
-Demais recursos preservados: 29 exercícios, treino ABC e divisão pernas/superiores, metas individuais de séries e repetições, troca de aparelhos, histórico, backups, armazenamento `treinapro-personal-v1`, PWA offline.
+29 exercícios do catálogo, séries e repetições individuais, troca de aparelho, personalização dos planos ABC e pernas/superiores, registro de cargas, histórico, perfis, backups, armazenamento `treinapro-personal-v1`, serviço offline e PWA.
 
-Para reconstruir o HTML portátil: `python make_portable.py`. Cache do service worker: `treinapro-v2.2-rev10`.
+As ilustrações são esquemáticas e educativas, não uma avaliação de postura ou recomendação de carga. Não foram copiadas mídias de openGym/Gym visual.
+
+## Publicação
+
+Versão PWA: `treinapro-v2.3-rev11`. Arquivo portátil: `python make_portable.py`.
