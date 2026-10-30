@@ -459,3 +459,32 @@ button.week-day:hover{border-color:var(--lime);background:#203b32}
 .topbar-brand{display:none;object-fit:contain;flex-shrink:0;border-radius:8px}
 @media(max-width:900px){.topbar-brand{display:block}.breadcrumbs{display:flex;align-items:center;gap:9px;min-width:0}.breadcrumbs .dot-live{display:none}.breadcrumbs #breadcrumb{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 .brand-webp{object-fit:contain}
+
+/* REV15: acessibilidade, treino mobile e filtros de evolução da auditoria. */
+.saved-workout-hint{margin-top:12px;color:#d7f4c6;font-size:12px;line-height:1.5}
+.period-filter{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 20px}
+.period-filter>span{margin-right:5px;color:var(--muted);font-size:13px;font-weight:700}
+.period-option{min-height:44px;padding:8px 16px;border-radius:12px;border:1px solid #466358;color:#e3eee9;background:#142b32;font-size:13px;font-weight:800}
+.period-option.active,.period-option[aria-pressed="true"]{border-color:var(--lime);background:#304526;color:var(--lime)}
+.period-option:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+.modal-overlay{overscroll-behavior:contain}
+.modal{overscroll-behavior:contain}
+.set-done{min-height:44px}
+.set-row input{min-height:44px;font-size:16px}
+.close-btn{min-width:44px;min-height:44px}
+@media(max-width:740px){
+ .modal-overlay{padding:0;align-items:stretch}
+ .modal{border-radius:0;max-height:100dvh;height:100dvh;width:100%;border:0;padding-bottom:env(safe-area-inset-bottom,0px)}
+ .modal-bottom{position:sticky;bottom:0;z-index:5;background:#101e28f7;backdrop-filter:blur(10px);box-shadow:0 -12px 25px #06131c8f;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
+ .modal-bottom .btn{min-height:44px}
+ .steps-side{padding:18px 16px 26px}
+ .set-tracker{scroll-margin-top:20px;background:#142630;border:1px solid #365057;border-radius:16px;padding:14px}
+ .set-row{grid-template-columns:minmax(25px,38px) minmax(0,1fr) minmax(0,1fr) minmax(72px,94px);gap:6px}
+ .set-row input{width:100%;min-width:0;font-size:16px}
+ .set-done{min-height:46px;font-size:12px}
+}
+@media(max-width:360px){
+ .period-filter{gap:6px}.period-option{padding:8px 11px}
+ .set-row{grid-template-columns:28px minmax(0,1fr) minmax(0,1fr) 76px;gap:4px}
+}
+@media(prefers-reduced-motion:reduce){.modal-bottom{backdrop-filter:none}}
