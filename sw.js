@@ -1,12 +1,13 @@
 /* TreinaPro REV4: cache resiliente, sem travar o primeiro uso para baixar todas as ilustrações. */
-const VERSION='treinapro-v2.3-rev11';
+const VERSION='treinapro-v2.4-rev12';
 const SHELL=[ './', './index.html','./style.css','./pwa.css','./data.js','./storage.js','./app.js','./coach.js','./pwa.js','./manifest.webmanifest','./assets/icon-192.png','./assets/icon-512.png','./assets/favicon.svg'];
 const IDS=['supino','supino_inclinado','crucifixo','elevacao_lateral','triceps_polia','triceps_frances','puxada_alta','remada_baixa','remada_unilateral','face_pull','rosca_direta','rosca_martelo','agachamento','leg_press','extensora','afundo','romeno','flexora','panturrilha','prancha','hip_thrust','abdutora','bulgaro','desenvolvimento','supino_maquina','agachamento_goblet','step_up','abdominal','coice_polia'];
-const THUMBNAILS=IDS.map(id=>`./assets/exercises/${id}.svg`);
+const THUMBNAILS=IDS.map(id=>`./assets/webp/exercises/${id}.webp`);
 const FULL_DEMOS=IDS.flatMap(id=>[
- `./assets/motion/${id}.svg`,`./assets/motion-slow/${id}.svg`,`./assets/still/${id}.svg`,
- `./assets/frames/start/${id}.svg`,`./assets/frames/finish/${id}.svg`
+ `./assets/motion/${id}.svg`,`./assets/motion-slow/${id}.svg`,`./assets/webp/still/${id}.webp`,
+ `./assets/webp/frames/start/${id}.webp`,`./assets/webp/frames/finish/${id}.webp`
 ]);
+const UI_WEBP=['./assets/webp/ui/brand.webp','./assets/webp/ui/hero-workout.webp','./assets/webp/ui/empty-history.webp','./assets/webp/ui/library.webp','./assets/webp/ui/offline.webp'];
 const scope=new URL(self.registration.scope);
 const normalized=path=>new URL(path,scope).href;
 const scoped=url=>{const u=new URL(url);return u.origin===scope.origin&&u.pathname.startsWith(scope.pathname);};
@@ -28,7 +29,7 @@ self.addEventListener('activate',event=>{event.waitUntil((async()=>{
  if(keys.length){
    // Preservar todas as demonstrações que o usuário baixou nas versões anteriores.
    const current=await caches.open(VERSION),older=await Promise.all(keys.map(k=>caches.open(k)));
-   const paths=[...THUMBNAILS,...FULL_DEMOS];let index=0;
+   const paths=[...THUMBNAILS,...FULL_DEMOS,...UI_WEBP];let index=0;
    async function migrate(){while(index<paths.length){const path=paths[index++],url=normalized(path);
       try{if(await current.match(url))continue;
         for(const cache of older){const old=await cache.match(url);if(old&&isSuccess(old)){await current.put(url,old.clone());break;}}
@@ -56,7 +57,7 @@ self.addEventListener('fetch',event=>{
 });
 async function prepareOffline(port){
  const cache=await caches.open(VERSION);let done=0,failed=0;
- const files=[...THUMBNAILS,...FULL_DEMOS];const total=files.length;
+ const files=[...THUMBNAILS,...FULL_DEMOS,...UI_WEBP];const total=files.length;
  let index=0;
  async function worker(){while(index<files.length){const path=files[index++],url=normalized(path);
    try{

@@ -33,7 +33,7 @@
    const target=headings.find(el=>safeText(el.querySelector('h2'))==='Dados e privacidade');
    if(!target)return;
    const panel=document.createElement('section');panel.id='installPanel';panel.className='install-panel';panel.setAttribute('aria-labelledby','installTitle');
-   panel.innerHTML=`<div class="install-head"><span class="install-symbol" aria-hidden="true">⇩</span><div><h2 id="installTitle">Instalar e usar offline</h2><p id="installInstructions"></p></div></div><div class="install-buttons"><button type="button" class="btn btn-primary" data-pwa="install" hidden>Instalar no celular</button><button type="button" class="btn btn-dark" data-pwa="offline">Salvar exercícios para uso offline</button><button type="button" class="btn btn-dark" data-pwa="update" hidden>Atualizar aplicativo</button></div><p id="offlineStatus" class="install-status" role="status" aria-live="polite"></p>`;
+   panel.innerHTML=`<div class="install-head"><span class="install-symbol" aria-hidden="true"><img class="install-icon-webp" src="assets/webp/ui/offline.webp" alt="" loading="lazy"></span><div><h2 id="installTitle">Instalar e usar offline</h2><p id="installInstructions"></p></div></div><div class="install-buttons"><button type="button" class="btn btn-primary" data-pwa="install" hidden>Instalar no celular</button><button type="button" class="btn btn-dark" data-pwa="offline">Salvar exercícios para uso offline</button><button type="button" class="btn btn-dark" data-pwa="update" hidden>Atualizar aplicativo</button></div><p id="offlineStatus" class="install-status" role="status" aria-live="polite"></p>`;
    target.before(panel);renderPanel();
  }
  function setStatus(message){statusText=message;renderPanel();}

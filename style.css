@@ -418,3 +418,20 @@ button.week-day:hover{border-color:var(--lime);background:#203b32}
 .routine-target-fields input:focus-visible{outline:3px solid #d3f783;outline-offset:2px}
 .routine-target-panel .routine-actions .btn{min-height:46px}
 @media(max-width:380px){.routine-target-fields{grid-template-columns:1fr}.routine-target-panel{padding:12px}.routine-target-panel .routine-actions{display:grid;grid-template-columns:1fr}}
+
+/* REV12: WebP static assets keep 2D animated SVG demonstrations intact. */
+.hero-visual img.hero-webp{display:block;width:100%;max-height:220px;object-fit:contain;filter:drop-shadow(0 15px 22px #061b2280);border-radius:16px;position:relative;z-index:1}
+.hero-visual svg{display:none}
+.hero-visual.hero-fallback svg{display:block}
+.brand-mark{position:relative;isolation:isolate}
+.brand-webp{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:13px;z-index:2}
+.library-title{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.library-title>div{min-width:0;flex:1}
+.library-illustration{width:min(210px,26%);max-height:116px;object-fit:cover;border-radius:15px;border:1px solid #42665c}
+.empty-history{display:flex;align-items:center;flex-direction:column;gap:13px}
+.empty-history img{width:min(280px,95%);height:auto;max-height:164px;object-fit:cover;border-radius:14px}
+.empty-history p{text-align:center;margin:0}
+.install-symbol{position:relative}
+.install-icon-webp{width:44px;height:44px;object-fit:cover;border-radius:12px}
+@media(max-width:640px){.library-illustration{width:85px;max-height:80px}.library-title{gap:10px}.hero-visual img.hero-webp{max-height:155px}}
+@media(max-width:360px){.library-illustration{display:none}}

@@ -1,22 +1,21 @@
-# TreinaPro v2.3 — REV11: quatro demonstrações 2D individualizadas
+# TreinaPro v2.4 — REV12: pacote visual WebP
 
-## Desenhos refeitos
+## Imagens integradas
+A revisão cria **121 WebP** para os recursos estáticos:
+- **29 imagens de exercícios** em `assets/webp/exercises/`.
+- **58 imagens de etapas** em `assets/webp/frames/start` e `frames/finish`.
+- **29 imagens pausadas** em `assets/webp/still`.
+- **5 imagens de interface** em `assets/webp/ui`: marca, hero, biblioteca, histórico vazio e offline.
+- As animações **normal e lenta continuam em SVG**, evitando perder movimento e resolução.
+- Se o WebP não carregar por causa de um cache antigo, a interface retorna automaticamente ao SVG original.
 
-- **Mesa flexora deitada (`flexora`)**: banco longo, quadril apoiado, eixo do joelho e rolo que acompanha o tornozelo enquanto a perna flexiona. O catálogo descreve *mesa flexora*, não cadeira flexora sentada.
-- **Remada baixa sentada (`remada_baixa`)**: torre de pesos, cabo e pegador, apoio dos pés e banco; os braços puxam o pegador na direção da cintura sem mover o tronco.
-- **Desenvolvimento de ombros (`desenvolvimento`)**: vista frontal, dois halteres, assento/encosto; cada braço empurra os halteres acima da cabeça.
-- **Crucifixo com halteres (`crucifixo`)**: vista superior do banco; halteres se afastam em arco com cotovelos levemente flexionados, evitando confundí-lo com supino.
+## Geração e publicação
+O script `build_webp_assets.py` gera os arquivos WebP a partir dos SVGs autorais corrigidos (CairoSVG e Pillow). O fluxo `.github/workflows/build-webp.yml` converte, valida 121 WebP e adiciona os arquivos à branch principal.
 
-Cada exercício agora possui seis arquivos SVG próprios: comparação de posições, quadro inicial, quadro final, pausado, animação normal e animação lenta. Total: **24 SVGs substituídos**.
+Para regenerar localmente:
+```sh
+python -m pip install pillow cairosvg
+python build_webp_assets.py
+```
 
-**Não copiar/regerar por engano:** `PROTECTED_2D` em `make_illustrations.py` protege os 14 exercícios refinados nas REV3/9/10/11. `make_animations.py` e `make_frames.py` leem a mesma proteção para não sobrescrever as mídias. Gerar novas variantes genéricas não atualiza esses exercícios; suas mídias 2D têm edição individual.
-
-## Preservações
-
-29 exercícios do catálogo, séries e repetições individuais, troca de aparelho, personalização dos planos ABC e pernas/superiores, registro de cargas, histórico, perfis, backups, armazenamento `treinapro-personal-v1`, serviço offline e PWA.
-
-As ilustrações são esquemáticas e educativas, não uma avaliação de postura ou recomendação de carga. Não foram copiadas mídias de openGym/Gym visual.
-
-## Publicação
-
-Versão PWA: `treinapro-v2.3-rev11`. Arquivo portátil: `python make_portable.py`.
+O cache offline `treinapro-v2.4-rev12` inclui os WebP e as demonstrações animadas; manutenção da chave de dados `treinapro-personal-v1`, planos, histórico e metas.
