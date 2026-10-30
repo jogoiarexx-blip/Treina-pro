@@ -52,3 +52,17 @@ test('backup preserva chave de dados anterior',async({page})=>{
  expect(stored.name).toBe('Pessoa Teste');
  expect(Array.isArray(stored.history)).toBeTruthy();
 });
+
+test('recupera perfil do IndexedDB quando localStorage foi limpo',async({page})=>{
+ await onboard(page);
+ await page.waitForFunction(async()=>{
+   const saved=await window.TreinaProStore.load();
+   return saved?.state?.name==='Pessoa Teste';
+ });
+ await page.evaluate(()=>localStorage.removeItem('treinapro-personal-v1'));
+ await page.reload();
+ await expect(page.locator('#welcomeForm')).toHaveCount(0);
+ await expect(page.locator('#app')).not.toHaveAttribute('inert','');
+ await page.locator('.mobile-nav [data-page="treinos"]').click();
+ await expect(page.getByRole('heading',{name:/Meus treinos/})).toBeVisible();
+});
