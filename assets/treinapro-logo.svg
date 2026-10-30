@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 630 150" role="img" aria-labelledby="t"><title id="t">Treina Pro — Personal Digital</title>
+<defs><linearGradient id="l" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ccff45"/><stop offset="1" stop-color="#2ed9d5"/></linearGradient></defs>
+<rect width="140" height="140" rx="30" fill="#0b1822"/>
+<g transform="translate(6 6) scale(1.015)"><rect x="17" y="49" width="12" height="46" rx="6" fill="#ccff45"/><rect x="99" y="49" width="12" height="46" rx="6" fill="#2ed9d5"/><path d="M21 71H112" stroke="#2ed9d5" stroke-width="11"/><path d="M24 26H94L84 42H63L40 106H21L44 42H35Z" fill="url(#l)" stroke="#06131c" stroke-width="3"/><path fill="url(#l)" fill-rule="evenodd" stroke="#06131c" stroke-width="3" d="M75 38H87C107 38 115 51 108 67C104 76 95 82 82 82H68L59 105H42L65 38H75ZM81 53L75 68H84C91 68 95 65 96 60C97 56 95 53 89 53H81Z"/></g>
+<text x="162" y="86" fill="#f2f8f8" font-family="Arial, Helvetica, sans-serif" font-size="71" font-weight="900" letter-spacing="-4">TREINA</text>
+<text x="412" y="86" fill="url(#l)" font-family="Arial, Helvetica, sans-serif" font-size="71" font-weight="900" letter-spacing="-4">PRO</text>
+<text x="165" y="114" fill="#a4b8bf" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" letter-spacing="5">PERSONAL DIGITAL</text>
+</svg>
