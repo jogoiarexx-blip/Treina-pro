@@ -183,7 +183,7 @@
       <section class="welcome-dialog" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" aria-describedby="welcomeDescription">
        <div class="welcome-decor decor-one" aria-hidden="true"></div><div class="welcome-decor decor-two" aria-hidden="true"></div>
        <div class="welcome-content">
-        <div class="welcome-brand"><span class="brand-mark">T<span>+</span></span><div><b>treina<span>pro</span></b><small>SEU PERSONAL DIGITAL</small></div><span class="welcome-stage">SEU PRIMEIRO PASSO</span></div>
+        <div class="welcome-brand"><span class="brand-mark"><img class="brand-webp" src="assets/treinapro-icon.svg" alt="" decoding="async">T<span>+</span></span><div><b>treina<span>pro</span></b><small>SEU PERSONAL DIGITAL</small></div><span class="welcome-stage">SEU PRIMEIRO PASSO</span></div>
         <div class="welcome-header"><span class="eyebrow">✦ BEM-VINDO(A) AO TREINAPRO</span><h1 id="welcomeTitle">Vamos montar o <em>seu treino.</em></h1><p id="welcomeDescription">Diga como podemos chamar você e selecione o programa que prefere. Leva menos de um minuto.</p></div>
         <form id="welcomeForm" class="welcome-form">
          <div class="welcome-name"><label for="welcomeName"><span class="welcome-number">01</span> Qual é o seu nome?</label><input id="welcomeName" name="name" class="welcome-input" autocomplete="given-name" placeholder="Digite seu nome" type="text" minlength="2" maxlength="35" required value="${safe(state.name||'')}"><small>O personal vai usar seu nome para personalizar o aplicativo.</small></div>
