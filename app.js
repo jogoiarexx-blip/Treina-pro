@@ -236,6 +236,7 @@
        </div>
       </section>
      </div>`;
+   root.querySelector('#welcomeName')?.focus();
  }
  function dismissWelcome(){
    $('welcomeRoot').replaceChildren();
@@ -260,6 +261,7 @@
    save();
    dismissWelcome();
    page='inicio';render();
+   document.querySelector('[data-action="start-workout"]')?.focus();
    notify(`Boas-vindas, ${state.name.split(' ')[0]}! Seu programa está pronto.`);
  }
  function render(){document.title=`TreinaPro — ${({'inicio':'Início','treinos':'Meus treinos','biblioteca':'Exercícios','progresso':'Evolução','ajustes':'Configurações'})[page]||'Personal digital'}`;
@@ -719,9 +721,9 @@ function editRoutine(action,id,delta){
  document.addEventListener('input',e=>{if(e.target.id==='welcomeName')e.target.setCustomValidity('');if(e.target.matches('#searchExercises')){search=e.target.value;refreshLibraryResults();}if(e.target.matches('[data-set][data-field]'))syncSetField(e.target);});
  document.addEventListener('change',e=>{if(e.target.matches('#muscleFilter')){muscle=e.target.value;refreshLibraryResults();}if(e.target.matches('#equipmentFilter')){equipment=e.target.value;refreshLibraryResults();}if(e.target.id==='preferredEquipment'){const value=e.target.value;if(EQUIPMENT_OPTIONS.some(([key])=>key===value)){state.equipmentPreference=value;save();notify('Preferência de equipamento atualizada.');}}if(e.target.matches('#importFile'))importData(e.target.files?.[0]);if(e.target.id==='welcomePhotoFile')handleProfilePhoto(e.target.files?.[0],'welcome');if(e.target.id==='profilePhotoFile')handleProfilePhoto(e.target.files?.[0],'settings');if(e.target.matches('input[name="settingsGoal"]'))setGoal(e.target.value);if(e.target.matches('#progressExerciseSelect')){progressExercise=e.target.value;const target=document.querySelector('.strength-panel');if(target)target.outerHTML=renderStrengthPanel();}});
  document.addEventListener('keydown',e=>{
-   const dialog=$('modalRoot')?.querySelector('[role="dialog"]');
+   const dialog=$('modalRoot')?.querySelector('[role="dialog"]')||$('welcomeRoot')?.querySelector('[role="dialog"]');
    if(!dialog)return;
-   if(e.key==='Escape'){e.preventDefault();closeModal();return;}
+   if(e.key==='Escape'){e.preventDefault();if($('modalRoot')?.contains(dialog))closeModal();return;}
    if(e.key!=='Tab')return;
    const items=[...dialog.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(el=>!el.hidden&&el.getClientRects().length);
    if(!items.length){e.preventDefault();dialog.tabIndex=-1;dialog.focus();return;}
