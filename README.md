@@ -1,16 +1,20 @@
-# TreinaPro v2.1 — REV8: edição individual de treinos
+# TreinaPro v2.2 — REV9: séries/repetições individuais e demonstrações 2D específicas
 
-A REV8 permite editar exercícios de cada dia de treinamento, mantendo os planos ABC e pernas/superiores como modelos originais.
+## Personalização
+- Dentro de **Editar treino**, cada exercício possui o botão **Séries/reps**.
+- Cada dia de cada programa tem metas independentes, com **1 a 8 séries**, repetições (como `8–12`) ou duração (como `30 s`).
+- Valores são validados antes de salvar; o contador de séries, registro e histórico seguem as metas.
+- Metas são armazenadas em `state.workoutTargets[programa][dia][exercícioOriginal]` dentro da chave anterior `treinapro-personal-v1` e IndexedDB existente.
+- O usuário pode restaurar a meta padrão de um exercício ou o dia inteiro.
+- Mudanças ficam bloqueadas se o treino do dia tiver peso, repetições ou séries registrados. Não se modificam logs históricos.
+- Após finalizar, o histórico registra `exerciseOrder` com séries, repetições planejadas e o exercício realizado.
+- Alternativas do mesmo grupo muscular passam a ser reconhecidas também depois de reabrir o aplicativo.
 
-- Adicione exercícios escolhidos entre os 29 movimentos 2D (até 10 por dia).
-- Troque exercícios por opções do mesmo grupo muscular principal.
-- Reordene usando botões para subir/descer e remova exercícios (mínimo de 1 por dia).
-- Restaure os exercícios originais de um dia, sem afetar as outras sessões.
-- Mais alternativas para troca temporária de aparelho ocupado na REV7.
-- Contadores e progresso calculados sobre o treino efetivo, não sobre a lista de fábrica.
-- As edições persistem por programa e por dia em `customWorkouts`, na mesma chave de dados `treinapro-personal-v1`, com cópia em IndexedDB.
-- Editar é bloqueado após qualquer peso, repetição ou série registrada no dia, evitando perda acidental de dados.
-- Histórico de treinos novos passa a salvar `exerciseOrder` com a ordem e o exercício realmente executado.
-- Demonstrativos SVG, offline, perfil, backups e planos originais mantidos.
+## Demonstrações 2D
+- **Face pull**: personagem em pé, corda da polia alta se aproximando do rosto, com cotovelos se movendo.
+- **Coice na polia**: tornozeleira, polia baixa e perna de trabalho estendendo para trás com o tronco apoiado.
+- Foram substituídos os 12 SVGs correspondentes: comparativos, quadros inicial/final e animações normal/lenta/pausada.
+- As mídias são desenhos SVG próprios do projeto; não foram copiadas animações de openGym/Gym visual.
+- **Atenção ao manter o código:** os geradores antigos `make_illustrations.py`, `make_frames.py`, `make_animations.py` e `make_rev3_2d.py` ainda usam variantes genéricas e podem sobrescrever essas melhorias se executados novamente. Mantenha os SVGs específicos da REV9 quando regenerar o catálogo.
 
-Não foi incorporado código AGPL nem imagens de terceiros.
+Perfil, backups, modo offline, histórico, programas e os demais 27 exercícios 2D são preservados. As animações são guias esquemáticos, não uma avaliação da postura nem substitutos de supervisão profissional.
