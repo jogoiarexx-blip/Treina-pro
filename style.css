@@ -488,3 +488,14 @@ button.week-day:hover{border-color:var(--lime);background:#203b32}
  .set-row{grid-template-columns:28px minmax(0,1fr) minmax(0,1fr) 76px;gap:4px}
 }
 @media(prefers-reduced-motion:reduce){.modal-bottom{backdrop-filter:none}}
+
+/* REV15: atalho para as séries sem esconder a demonstração. */
+.mobile-workout-bar{display:none}
+@media(max-width:740px){
+ .mobile-workout-bar{position:sticky;top:0;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#132a33f7;border-bottom:1px solid #446456;padding:11px 15px;box-shadow:0 5px 18px #07161e95}
+ .mobile-workout-bar>div{min-width:0;display:grid;gap:3px}
+ .mobile-workout-bar strong{font-size:12px;color:#eaffda}
+ .mobile-workout-bar small{font-size:11px;line-height:1.35;color:#bfd2d0;max-width:185px}
+ .mobile-workout-bar .btn{min-height:44px;white-space:nowrap;flex-shrink:0}
+}
+@media(max-width:345px){.mobile-workout-bar{padding:9px}.mobile-workout-bar .btn{padding:10px 8px;font-size:12px}}
